@@ -1,4 +1,4 @@
-                                                 #🛡️ NEXA-TRADER
+                                                #🛡️ NEXA-TRADER
 
 <div align="center">
 
