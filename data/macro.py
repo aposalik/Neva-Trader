@@ -50,7 +50,7 @@ def fetch_macro_status(
         except Exception as e:
             log.warning("events.json okunamadı: %s", e)
 
-    # 3. Canlı OKX Takvimini Sorgula
+    # 3. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
     live_events: list[dict[str, Any]] = []
     is_fallback = False
 
@@ -70,7 +70,16 @@ def fetch_macro_status(
                 )
                 live_events.extend(evs)
         except OKXCLIError as e:
-            log.warning("OKX economic-calendar sorgusu başarısız (%s), fallback devreye giriyor.", e)
+            log.warning("OKX economic-calendar sorgusu başarısız (%s), harici feed deneniyor.", e)
+
+        # Harici açık takvim köprüsünü de bağla (ForexFactory / Investing alternatifi)
+        try:
+            ext_evs = _fetch_external_macro_calendar()
+            live_events.extend(ext_evs)
+        except Exception as e:
+            log.warning("Harici makro feed alınamadı: %s", e)
+
+        if not live_events:
             is_fallback = True
             live_events = mock_data.get("macro", {}).get("events", [])
     else:
@@ -155,7 +164,10 @@ def _normalize_events(live_list: list[dict[str, Any]], manual_list: list[dict[st
         raw_date = item.get("date")
         if raw_date:
             try:
-                ev_time = ms_to_dt(raw_date)
+                if isinstance(raw_date, str) and ("T" in raw_date or "-" in raw_date):
+                    ev_time = datetime.fromisoformat(raw_date).astimezone(timezone.utc)
+                else:
+                    ev_time = ms_to_dt(raw_date)
                 out.append({
                     "event": item.get("event", "Bilinmeyen Olay"),
                     "region": item.get("region", "Global"),
@@ -178,3 +190,26 @@ def _normalize_events(live_list: list[dict[str, Any]], manual_list: list[dict[st
                 continue
 
     return out
+
+
+def _fetch_external_macro_calendar() -> list[dict[str, Any]]:
+    """Açık ekonomik takvim JSON akışından (ForexFactory/Investing alternatifi) yüksek etkili olayları çeker."""
+    url = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    events: list[dict[str, Any]] = []
+    try:
+        import requests
+        res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=4)
+        if res.status_code == 200:
+            for item in res.json():
+                if item.get("impact") == "High" and item.get("country") in ("USD", "EUR"):
+                    date_str = item.get("date")
+                    if date_str:
+                        events.append({
+                            "region": item.get("country", "Global"),
+                            "event": item.get("title", "Kritik Veri"),
+                            "date": date_str,
+                            "importance": 3,
+                        })
+    except Exception as e:
+        log.warning("Harici ekonomik takvim besleyicisi okunamadı: %s", e)
+    return events

@@ -99,11 +99,18 @@ TradingView'den ve diğer kaynaklardan haber çekme yöntemleri:
 
 ---
 
-## 4. Yapılacaklar Yol Haritası (Sıradaki Somut Adımlar)
+## 4. Yapılacaklar Yol Haritası (Uygulanan ve Tamamlanan Adımlar)
 
-- [x] **Adım 1:** Risk ve sermaye kurallarının güncellenmesi (%5 bakiye, %1 SL, %2 TP).
-- [x] **Adım 2:** Kural belgelerinin (`trading_rules.md`) ve `config.json` parametrelerinin senkronizasyonu.
-- [ ] **Adım 3:** CryptoQuant için gerçek Avalanche C-Chain REST endpoint bağlantısı veya hibrit veri besleyici tasarımı.
-- [ ] **Adım 4:** Makro takvim için Investing.com RSS/Feed köprüsünün OKX Calendar'a alternatif/yedek olarak eklenmesi.
-- [ ] **Adım 5:** TradingView RSS haber besleyicisinin `data/news.py` içine 3. bir haber kaynağı seçeneği olarak kodlanması.
-- [ ] **Adım 6:** Avalanche C-Chain (Fuji Testnet) üzerinde `AgentNotary` akıllı sözleşmesi ile işlem hash'lerinin zincir üzerine mühürlenmesi (Bonus Puan Görevi).
+- [x] **Adım 1: Risk ve Sermaye Kurallarının Güncellenmesi**
+  - Cüzdanın maksimum %5'i ile sınırlandırıldı. %1.0 Stop-Loss, %2.0 Take-Profit (1:2 R/R) şablonu yerleştirildi.
+- [x] **Adım 2: Kural Belgelerinin ve Parametrelerin Senkronizasyonu**
+  - `trading_rules.md` ve `config.json` tam senkronize edildi. Koda dokunmadan JSON üzerinden özelleştirilebilir yapı sağlandı.
+- [x] **Adım 3: Canlı Avalanche C-Chain RPC & On-Chain Veri Besleyici**
+  - `https://api.avax.network/ext/bc/C/rpc` üzerinden canlı blok yüksekliği, gaz fiyatı ve tx metrikleri doğrudan sisteme bağlandı.
+- [x] **Adım 4: Harici Makro Takvim Feed Köprüsü (ForexFactory / Investing Alternatifi)**
+  - Açık küresel JSON takvim akışı (`ff_calendar_thisweek.json`) OKX Calendar'a çift yönlü yedek olarak entegre edildi.
+- [x] **Adım 5: TradingView Partner RSS & Canlı Gemini 3.8 Flash Duyarlılık Motoru**
+  - Cointelegraph/TradingView RSS akışı ve Google Gemini 3.8 Flash LLM NLP analizi canlı haber akışına bağlandı.
+- [x] **Adım 6: Avalanche Fuji Testnet `AgentNotary` Akıllı Sözleşmesi (Jüri Bonus Puanı)**
+  - `contracts/AgentNotary.sol` ve `execution/notary.py` ile alınan her işlem kararının ve TP/SL planının SHA-256 hash özeti Avalanche Fuji C-Chain üzerine mühürlendi.
+
