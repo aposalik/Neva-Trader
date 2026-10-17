@@ -51,6 +51,15 @@ def fetch_macro_status(
         except Exception as e:
             log.warning("events.json okunamadı: %s", e)
 
+    calendar_events: list[dict[str, Any]] = []
+    c_path = calendar_path or Path("takvim_verileri.json")
+    if c_path and c_path.exists():
+        try:
+            c_data = load_json(c_path)
+            calendar_events = c_data.get("yuksek_etkili_haberler", [])
+        except Exception as e:
+            log.warning("takvim_verileri.json okunamadi: %s", e)
+
     # 3. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
     live_events: list[dict[str, Any]] = []
     is_fallback = False
@@ -189,7 +198,7 @@ def _normalize_events(
                 out.append({
                     "event": item.get("event", "Manuel Olay"),
                     "region": item.get("region", "Custom"),
-                    "time_utc": _as_utc(ev_time),
+                    "time_utc": ev_time.astimezone(timezone.utc) if ev_time.tzinfo else ev_time.replace(tzinfo=timezone.utc),
                 })
             except (TypeError, ValueError):
                 log.warning("Manuel takvim etkinliğinin zamanı çözümlenemedi: %s", item)
@@ -203,7 +212,7 @@ def _normalize_events(
                 out.append({
                     "event": item.get("baslik") or "TradingView Etkinliği",
                     "region": item.get("ulke") or "Global",
-                    "time_utc": _as_utc(ev_time),
+                    "time_utc": ev_time.astimezone(timezone.utc) if ev_time.tzinfo else ev_time.replace(tzinfo=timezone.utc),
                 })
             except (AttributeError, TypeError, ValueError):
                 log.warning("TradingView takvim etkinliğinin zamanı çözümlenemedi: %s", item)
