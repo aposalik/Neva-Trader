@@ -59,7 +59,7 @@ class DashboardRenderer:
 
         for p in decision.pillars:
             st_text = self._status_badge(p.status)
-            src_text = self._source_badge(p.source)
+            src_text = self._source_badge(p)
             detail = Text(p.reason, overflow="fold")
             table.add_row(p.name, st_text, src_text, detail)
 
@@ -82,7 +82,10 @@ class DashboardRenderer:
             return Text("[FAIL]", style="bold red")
         return Text("[NEUTRAL]", style="bold yellow")
 
-    def _source_badge(self, source: Source) -> Text:
+    def _source_badge(self, item: Any) -> Text:
+        if isinstance(item, PillarResult) and getattr(item, "source_label", None):
+            return Text(f"[{item.source_label}]", style="bold cyan")
+        source = item.source if isinstance(item, PillarResult) else item
         if source == Source.LIVE:
             return Text("[CANLI: OKX]", style="bold cyan")
         elif source == Source.FALLBACK:

@@ -28,6 +28,7 @@ class PillarResult:
     reason: str
     source: Source = Source.LIVE
     metrics: dict[str, Any] = field(default_factory=dict)
+    source_label: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -35,6 +36,7 @@ class PillarResult:
             "status": self.status.value,
             "reason": self.reason,
             "source": self.source.value,
+            "source_label": self.source_label,
             "metrics": self.metrics,
         }
 

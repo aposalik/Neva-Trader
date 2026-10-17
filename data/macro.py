@@ -51,17 +51,34 @@ def fetch_macro_status(
         except Exception as e:
             log.warning("events.json okunamadı: %s", e)
 
-    # 3. TradingView takvim dosyası (takvim_cek.py tarafından oluşturulur)
+    # 3. TradingView takvim dosyası (takvim_cek.py tarafından oluşturulur veya otomatik tazelenir)
     calendar_events: list[dict[str, Any]] = []
-    if calendar_path and calendar_path.exists():
+    if calendar_path:
+        # Eğer dosya yoksa veya son 2 saatten eskiyse TradingView'dan otomatik tazele
         try:
-            calendar_data = load_json(calendar_path)
-            calendar_events = calendar_data.get("yuksek_etkili_haberler", [])
-            if not isinstance(calendar_events, list):
-                log.warning("%s içinde yuksek_etkili_haberler listesi bulunamadı.", calendar_path)
-                calendar_events = []
+            needs_refresh = False
+            if not calendar_path.exists():
+                needs_refresh = True
+            else:
+                mtime = calendar_path.stat().st_mtime
+                if (now.timestamp() - mtime) > 7200:  # 2 saatten eski
+                    needs_refresh = True
+
+            if needs_refresh and not force_mock and cfg.get("source") != "mock":
+                from takvim_cek import fetch_tradingview_events
+                fetch_tradingview_events(save_path=calendar_path)
         except Exception as e:
-            log.warning("TradingView takvim dosyası okunamadı (%s): %s", calendar_path, e)
+            log.warning("TradingView otomatik takvim senkronizasyonu atlandı: %s", e)
+
+        if calendar_path.exists():
+            try:
+                calendar_data = load_json(calendar_path)
+                calendar_events = calendar_data.get("yuksek_etkili_haberler", [])
+                if not isinstance(calendar_events, list):
+                    log.warning("%s içinde yuksek_etkili_haberler listesi bulunamadı.", calendar_path)
+                    calendar_events = []
+            except Exception as e:
+                log.warning("TradingView takvim dosyası okunamadı (%s): %s", calendar_path, e)
 
     # 4. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
     live_events: list[dict[str, Any]] = []
@@ -121,6 +138,9 @@ def fetch_macro_status(
             closest_event_name = f"{ev_name} ({fmt_tr(ev_time)})"
 
     source = Source.FALLBACK if is_fallback else (Source.MOCK if cfg.get("source") == "mock" else Source.LIVE)
+    source_label = None
+    if source == Source.LIVE:
+        source_label = "CANLI: TRADINGVIEW" if calendar_events else "CANLI: OKX"
 
     if active_blackout_event:
         name, diff_sec, ev_time = active_blackout_event
@@ -133,6 +153,7 @@ def fetch_macro_status(
             reason=reason,
             source=source,
             metrics={"blackout": True, "event": name, "event_time": fmt_tr(ev_time)},
+            source_label=source_label,
         )
 
     # Blackout yok -> PASS
@@ -143,6 +164,7 @@ def fetch_macro_status(
         reason=f"Piyasa sakin, blackout penceresinde olay yok. {next_info}",
         source=source,
         metrics={"blackout": False, "next_event": closest_event_name or "Yok"},
+        source_label=source_label,
     )
 
 

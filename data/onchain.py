@@ -151,10 +151,13 @@ def _evaluate_metrics(
     if rpc_info:
         metrics_dict.update(rpc_info)
 
+    source_label = "CANLI: C-CHAIN" if (source == Source.LIVE and rpc_info) else None
+
     return PillarResult(
         name=pillar_name,
         status=status,
         reason=reason_str,
         source=source,
         metrics=metrics_dict,
+        source_label=source_label,
     )
