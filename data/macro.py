@@ -51,7 +51,19 @@ def fetch_macro_status(
         except Exception as e:
             log.warning("events.json okunamadı: %s", e)
 
-    # 3. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
+    # 3. TradingView takvim dosyası (takvim_cek.py tarafından oluşturulur)
+    calendar_events: list[dict[str, Any]] = []
+    if calendar_path and calendar_path.exists():
+        try:
+            calendar_data = load_json(calendar_path)
+            calendar_events = calendar_data.get("yuksek_etkili_haberler", [])
+            if not isinstance(calendar_events, list):
+                log.warning("%s içinde yuksek_etkili_haberler listesi bulunamadı.", calendar_path)
+                calendar_events = []
+        except Exception as e:
+            log.warning("TradingView takvim dosyası okunamadı (%s): %s", calendar_path, e)
+
+    # 4. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
     live_events: list[dict[str, Any]] = []
     is_fallback = False
 
@@ -209,7 +221,14 @@ def _normalize_events(
                 log.warning("TradingView takvim etkinliğinin zamanı çözümlenemedi: %s", item)
                 continue
 
-    return out
+    return sorted(out, key=lambda event: event["time_utc"])
+
+
+def _as_utc(value: datetime) -> datetime:
+    """Saat dilimi belirtilmemiş olay zamanlarını UTC kabul eder."""
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 def _fetch_external_macro_calendar() -> list[dict[str, Any]]:
