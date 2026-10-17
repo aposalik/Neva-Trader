@@ -118,6 +118,12 @@ python main.py --simulate-event "US CPI in 8m"
 
 # Borsaya gerçek emir iletmeden simülasyon (Dry-Run)
 python main.py --dry-run
+
+# Son 30 günlük karar geçmişini analiz edip öneriler üret
+python main.py --review-history
+
+# Son 7 günü analiz et
+python main.py --review-history --history-days 7
 ```
 
 TradingView takvim verilerini yenilemek için proje klasöründe `python takvim_cek.py` çalıştırın. Toplayıcı bugünden itibaren 7 günlük dönemdeki yüksek etkili ABD/Almanya/Euro Bölgesi olaylarını `takvim_verileri.json` dosyasına kaydeder; ajan her analiz döngüsünde bu dosyayı blackout kontrolüne dahil eder.
@@ -126,6 +132,8 @@ TradingView takvim verilerini yenilemek için proje klasöründe `python takvim_
 ```bash
 pytest -v
 ```
+
+Normal analiz döngüsü her karar kaydından sonra geçmiş raporunu otomatik yeniler. Özet her sinyal ayağı için PASS/FAIL/NEUTRAL sayılarını ve varsa doğrulanmış kapanış PnL'sini gösterir. `--once` ve jüri demosu sonunda; sürekli döngüde ilk karardan sonra özet ekrana basılır. Sonraki döngülerde rapor sessizce güncellenir. `--review-history` komutu analizi ayrıca çalıştırmak veya farklı bir dönem seçmek için kullanılabilir. Rapor `reports/history_analysis.md` dosyasına, izlenen pozisyon/dolum durumu `trade_history.json` dosyasına yazılır. Kapanışlar OKX'in gerçek spot dolumları ve ücretleriyle hesaplanır; dry-run işlemleri ve özellik eklenmeden önceki eski kayıtlar geriye dönük PnL üretmez. OKX CLI dolum sorgusu son 3 günle sınırlıdır; uygulamayı bu süreden uzun kapalı bırakmak eksik sonuçlara yol açabilir. Sonuçları başka bir bot veya kişi aynı paritede işlem yapıyorsa kesin strateji performansı olarak yorumlamayın; takip FIFO eşleştirmesine dayanır. Rapor risk ayarlarını otomatik değiştirmez.
 
 ---
 

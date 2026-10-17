@@ -2,6 +2,9 @@
 logs/
 state.json
 decisions.log
+reports/history_analysis.md
+trade_history.json
+trade_history.json.tmp
 __pycache__/
 .pytest_cache/
 .venv/
