@@ -13,7 +13,8 @@ class Status(str, Enum):
 
 
 class Source(str, Enum):
-    LIVE = "LIVE"            # Canlı kaynaktan gelen veri
+    LIVE = "LIVE"
+    HYBRID = "HYBRID"            # Canlı kaynaktan gelen veri
     MOCK = "MOCK"            # Config gereği bilinçli mock
     FALLBACK = "FALLBACK"    # Canlı kaynak başarısız -> mock'a düşüldü
     SIMULATED = "SIMULATED"  # Demo senaryosu / --simulate-event

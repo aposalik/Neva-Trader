@@ -189,6 +189,12 @@ class OKXClient:
         data = self._run(["spot", "orders", "--instId", inst_id])
         return data if isinstance(data, list) else []
 
+    def spot_fills(self, inst_id: str = "AVAX-USDT", limit: int = 20) -> list[dict[str, Any]]:
+        """Gerceklesen spot islem gecmisini sorgular."""
+        args = ["spot", "fills", "--instId", inst_id]
+        data = self._run(args)
+        return data if isinstance(data, list) else []
+
     def open_algo_orders(self, inst_id: str) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []
         for ord_type in ("oco", "conditional"):

@@ -51,36 +51,16 @@ def fetch_macro_status(
         except Exception as e:
             log.warning("events.json okunamadı: %s", e)
 
-    # 3. TradingView takvim dosyası (takvim_cek.py tarafından oluşturulur veya otomatik tazelenir)
     calendar_events: list[dict[str, Any]] = []
-    if calendar_path:
-        # Eğer dosya yoksa veya son 2 saatten eskiyse TradingView'dan otomatik tazele
+    c_path = calendar_path or Path("takvim_verileri.json")
+    if c_path and c_path.exists():
         try:
-            needs_refresh = False
-            if not calendar_path.exists():
-                needs_refresh = True
-            else:
-                mtime = calendar_path.stat().st_mtime
-                if (now.timestamp() - mtime) > 7200:  # 2 saatten eski
-                    needs_refresh = True
-
-            if needs_refresh and not force_mock and cfg.get("source") != "mock":
-                from takvim_cek import fetch_tradingview_events
-                fetch_tradingview_events(save_path=calendar_path)
+            c_data = load_json(c_path)
+            calendar_events = c_data.get("yuksek_etkili_haberler", [])
         except Exception as e:
-            log.warning("TradingView otomatik takvim senkronizasyonu atlandı: %s", e)
+            log.warning("takvim_verileri.json okunamadi: %s", e)
 
-        if calendar_path.exists():
-            try:
-                calendar_data = load_json(calendar_path)
-                calendar_events = calendar_data.get("yuksek_etkili_haberler", [])
-                if not isinstance(calendar_events, list):
-                    log.warning("%s içinde yuksek_etkili_haberler listesi bulunamadı.", calendar_path)
-                    calendar_events = []
-            except Exception as e:
-                log.warning("TradingView takvim dosyası okunamadı (%s): %s", calendar_path, e)
-
-    # 4. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
+    # 3. Canlı OKX Takvimi ve Harici Ekonomik Takvim Feed'i (Investing / ForexFactory)
     live_events: list[dict[str, Any]] = []
     is_fallback = False
 
@@ -223,7 +203,7 @@ def _normalize_events(
                 out.append({
                     "event": item.get("event", "Manuel Olay"),
                     "region": item.get("region", "Custom"),
-                    "time_utc": _as_utc(ev_time),
+                    "time_utc": ev_time.astimezone(timezone.utc) if ev_time.tzinfo else ev_time.replace(tzinfo=timezone.utc),
                 })
             except (TypeError, ValueError):
                 log.warning("Manuel takvim etkinliğinin zamanı çözümlenemedi: %s", item)
@@ -237,7 +217,7 @@ def _normalize_events(
                 out.append({
                     "event": item.get("baslik") or "TradingView Etkinliği",
                     "region": item.get("ulke") or "Global",
-                    "time_utc": _as_utc(ev_time),
+                    "time_utc": ev_time.astimezone(timezone.utc) if ev_time.tzinfo else ev_time.replace(tzinfo=timezone.utc),
                 })
             except (AttributeError, TypeError, ValueError):
                 log.warning("TradingView takvim etkinliğinin zamanı çözümlenemedi: %s", item)

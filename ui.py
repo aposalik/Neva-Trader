@@ -88,6 +88,8 @@ class DashboardRenderer:
         source = item.source if isinstance(item, PillarResult) else item
         if source == Source.LIVE:
             return Text("[CANLI: OKX]", style="bold cyan")
+        elif source == Source.HYBRID:
+            return Text("[HIBRIT: RPC+MODEL]", style="bold green")
         elif source == Source.FALLBACK:
             return Text("[FALLBACK: MOCK]", style="bold white on dark_red")
         elif source == Source.SIMULATED:

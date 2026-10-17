@@ -33,7 +33,7 @@ from execution.executor import OrderExecutor
 from models import Decision, OrderPlan, Status
 from risk.guardrail import GuardrailManager
 from risk.position_sizer import calculate_order_plan
-from strategy.signal_engine import SignalEngine
+from strategy.signal_engine import SignalEngine, generate_agentic_reasoning
 from strategy.technical import evaluate_technical_strategy
 from ui import DashboardRenderer
 from utils import append_jsonl, fmt_tr, load_json, now_utc, setup_logging
@@ -184,6 +184,9 @@ class NexaTraderEngine:
             else:
                 action = "BLOCKED"
                 reasons = [block_reason]
+
+        agentic_trace = generate_agentic_reasoning(tech_res, onchain_res, news_res, macro_res, action)
+        reasons.insert(0, agentic_trace)
 
         # Karar Nesnesini Derle
         decision = Decision(
