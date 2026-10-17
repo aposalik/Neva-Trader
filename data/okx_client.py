@@ -37,7 +37,15 @@ def _first(data: Any) -> dict[str, Any]:
 
 
 class OKXClient:
-    def __init__(self, demo: bool = True, timeout: int = 25, max_retries: int = 3) -> None:
+    def __init__(
+        self,
+        demo: bool = True,
+        timeout: int = 25,
+        max_retries: int = 3,
+        is_demo: bool | None = None,
+    ) -> None:
+        if is_demo is not None:
+            demo = is_demo
         exe = (shutil.which("okx.cmd") if sys.platform == "win32" else None) or shutil.which("okx")
         if exe is None:
             raise OKXCLIError("`okx` CLI bulunamadı. Kurulum: npm install -g @okx_ai/okx-trade-cli")
@@ -96,6 +104,9 @@ class OKXClient:
         return {"last": to_float(row["last"]), "bid": to_float(row.get("bidPx")),
                 "ask": to_float(row.get("askPx")), "ts": int(to_float(row.get("ts")))}
 
+    def get_ticker_price(self, inst_id: str = "AVAX-USDT") -> float:
+        return self.ticker(inst_id)["last"]
+
     def candles(self, inst_id: str, bar: str, limit: int) -> list[list[str]]:
         data = self._run(["market", "candles", inst_id, "--bar", bar, "--limit", str(limit)])
         if not isinstance(data, list):
@@ -119,6 +130,12 @@ class OKXClient:
                 out[ccy] = {"avail": to_float(d.get("availBal")),
                             "total": to_float(d.get("cashBal") or d.get("eq"))}
         return out
+
+    def get_balances(self) -> dict[str, float]:
+        return {
+            currency: values["avail"]
+            for currency, values in self.balances().items()
+        }
 
     # ------------------------------------------------------------------ haber / makro (Public)
     def coin_sentiment(self, coins: list[str], period: str = "24h") -> list[dict[str, Any]]:

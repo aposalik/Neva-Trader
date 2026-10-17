@@ -89,6 +89,9 @@ python takvim_cek.py
 ```
 Veriler `takvim_verileri.json` dosyasına yazılır ve ajan tarafından otomatik olarak makro blackout kontrolünde kullanılır. İnternet veya TradingView erişimi yoksa mevcut JSON dosyası korunur.
 
+### OKX Akışını Kontrol Etme
+`python test_flow.py` bakiye ve fiyat bilgilerini salt okunur biçimde kontrol eder. Demo alım emri ve attached TP/SL denemek için açıkça `python test_flow.py --submit-demo-order` çalıştırın.
+
 ---
 
 ## 4. OKX Arayüzünde Emri Görüntüleme Adımları

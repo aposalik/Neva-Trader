@@ -70,7 +70,7 @@ class NexaTraderEngine:
         self.inst_id = self.config.get("instrument", "AVAX-USDT")
 
         self.okx = OKXClient(
-            demo=self.is_demo,
+            is_demo=self.is_demo,
             timeout=int(self.config.get("cli", {}).get("timeout_sec", 25)),
             max_retries=int(self.config.get("cli", {}).get("max_retries", 3)),
         )

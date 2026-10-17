@@ -118,6 +118,9 @@ def fetch_macro_status(
             closest_event_name = f"{ev_name} ({fmt_tr(ev_time)})"
 
     source = Source.FALLBACK if is_fallback else (Source.MOCK if cfg.get("source") == "mock" else Source.LIVE)
+    source_label = None
+    if source == Source.LIVE:
+        source_label = "CANLI: TRADINGVIEW" if calendar_events else "CANLI: OKX"
 
     if active_blackout_event:
         name, diff_sec, ev_time = active_blackout_event
@@ -130,6 +133,7 @@ def fetch_macro_status(
             reason=reason,
             source=source,
             metrics={"blackout": True, "event": name, "event_time": fmt_tr(ev_time)},
+            source_label=source_label,
         )
 
     # Blackout yok -> PASS
@@ -140,6 +144,7 @@ def fetch_macro_status(
         reason=f"Piyasa sakin, blackout penceresinde olay yok. {next_info}",
         source=source,
         metrics={"blackout": False, "next_event": closest_event_name or "Yok"},
+        source_label=source_label,
     )
 
 
@@ -218,7 +223,14 @@ def _normalize_events(
                 log.warning("TradingView takvim etkinliğinin zamanı çözümlenemedi: %s", item)
                 continue
 
-    return out
+    return sorted(out, key=lambda event: event["time_utc"])
+
+
+def _as_utc(value: datetime) -> datetime:
+    """Saat dilimi belirtilmemiş olay zamanlarını UTC kabul eder."""
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 def _fetch_external_macro_calendar() -> list[dict[str, Any]]:
