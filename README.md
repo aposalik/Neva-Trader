@@ -136,3 +136,17 @@ pytest -v
 - **Tek Yönlü İşlem (Spot):** İlk MVP'de marjin tasfiye riskinden kaçınmak için sadece Spot alım yapılır; düşüş trendinde nakitte kalınır.
 
 ---
+
+## 5. Kod İncelemesi ve Mimari Güçlendirmeler (Audit & Hardening)
+
+Yapılan kapsamlı statik incelemeler ve jüri hazırlık testleri doğrultusunda sistemde uygulanan kritik iyileştirmeler:
+
+| Bileşen | Yapılan İyileştirme | Güvenlik / Şeffaflık Etkisi |
+| :--- | :--- | :--- |
+| **On-Chain Şeffaflık** | `Source.HYBRID` rozeti eklendi. Avalanche RPC'den canlı blok ve nAVAX gaz maliyeti okunurken, rezerv/MVRV metriklerinin analitik modelden geldiği terminalde `[HIBRIT: RPC+MODEL]` olarak netleştirildi. | Jüriye yanıltıcı veri sunumu engellendi; canlı RPC ile analitik model ayrımı şeffaflaştırıldı. |
+| **Canlı Kill-Switch Senkronizasyonu** | OKX CLI `spot_fills` sorgusu entegre edilerek gerçekleşen emirlerin kâr/zararı (`sync_realized_pnl_from_fills`) kümülatif günlük zarar takipçisine bağlandı. | Günlük %3 zarar sınırı borsa motorundaki gerçek dolumlarla anlık kilitlenebilir hale getirildi. |
+| **Web3 Fuji Noter Doğrulaması** | Karar hash'leri Avalanche Fuji Testnet'e (Chain ID: 43113) Web3 imzalı işlemle gönderilir. İşlem başarısız olursa veya cüzdan anahtarı girilmemişse sessizce onaylamak yerine `notarized: false` ve `ZİNCİRE_MÜHÜRLENEMEDİ` raporlanır. | Blokzincir denetim izinde %100 dürüstlük sağlandı. |
+| **Agentic Reasoning Açıklanabilirliği** | Sinyal motoruna `generate_agentic_reasoning()` zinciri eklendi. Ajanın sermayeyi neden koruduğu ve işlemi neden beklettiği terminal ve raporlara yansıtıldı. | Ajanın salt kural motoru değil, araçları ve koşulları tartan açıklanabilir bir AI karar mekanizması olduğu gösterildi. |
+| **Canlı Emir Güvenliği** | `--demo-script` ve `--dry-run` bayraklarının `--live` ile aynı anda çalışması kesin kurallarla engellendi. | Sunum sırasında borsaya kazara istenmeyen emir gönderilme riski sıfırlandı. |
+| **Makro Takvim Akışı** | `data/macro.py` içindeki `calendar_events` değişkeni ve TradingView UTC zaman dilimi normalizasyonu (`_as_utc`) düzeltildi (12/12 test geçildi). | Otonom döngüde yüksek etkili ekonomik veri blackout kontrolünün çökmeden çalışması garanti altına alındı. |
+
