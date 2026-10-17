@@ -75,7 +75,11 @@ flowchart LR
 
 ### Ana karar akışı
 
-<img width="952" height="615" alt="Screenshot 2026-10-17 at 6 49 09 PM" src="https://github.com/user-attachments/assets/8a994beb-5206-42da-9da5-78e136fe69c9" />
+<img width="1453" height="812" alt="Screenshot 2026-10-18 at 1 48 49 AM" src="https://github.com/user-attachments/assets/a55c8228-10f5-4a72-a4ec-be525f2239fe" />
+
+
+<img width="1453" height="812" alt="Screenshot 2026-10-18 at 1 49 12 AM" src="https://github.com/user-attachments/assets/e38ea9f5-708e-4411-bc24-b2f44bd7564f" />
+
 
 ## 🎯 4 Ayaklı Analiz Matrisi
 
