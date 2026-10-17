@@ -132,10 +132,14 @@ class OKXClient:
         data = self._run(args)
         return (data.get("details") or []) if isinstance(data, dict) else []
 
-    def economic_calendar(self, region: str, importance: int, newer_than_ms: int,
-                          older_than_ms: int, limit: int = 50) -> list[dict[str, Any]]:
-        data = self._run(["news", "economic-calendar", "--region", region, "--importance", str(importance),
-                          "--before", str(newer_than_ms), "--after", str(older_than_ms), "--limit", str(limit)])
+    def economic_calendar(self, region: str | None = None, importance: int | None = None, newer_than_ms: int = 0,
+                      older_than_ms: int = 0, limit: int = 50) -> list[dict[str, Any]]:
+        cmd = ["news", "economic-calendar", "--limit", str(limit)]
+        if region:
+            cmd.extend(["--region", str(region)])
+        if importance:
+            cmd.extend(["--importance", str(importance)])
+        data = self._run(cmd)
         return data if isinstance(data, list) else []
 
     # ------------------------------------------------------------------ emir

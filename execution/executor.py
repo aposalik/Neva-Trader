@@ -14,6 +14,7 @@ import time
 from typing import Any
 
 from data.okx_client import OKXClient, OKXCLIError
+from execution.notary import AvalancheNotary
 from models import OrderPlan
 
 log = logging.getLogger("nexa.executor")
@@ -23,13 +24,14 @@ class OrderExecutor:
     def __init__(self, okx: OKXClient, config: dict[str, Any]) -> None:
         self.okx = okx
         self.config = config
+        self.notary = AvalancheNotary()
 
     def execute_plan(
         self,
         plan: OrderPlan,
         dry_run: bool = False,
     ) -> dict[str, Any]:
-        """Onaylanmış OrderPlan'ı OKX borsa motoruna iletir."""
+        """Onaylanmış OrderPlan'ı OKX borsa motoruna iletir ve Avalanche'a mühürler."""
         cl_ord_id = f"NX{int(time.time())}"
         cli_args = self.okx.spot_buy_with_tpsl_args(
             inst_id=plan.inst_id,
@@ -39,6 +41,15 @@ class OrderExecutor:
             cl_ord_id=cl_ord_id,
         )
         command_preview = self.okx.preview(cli_args)
+
+        # Avalanche Fuji Testnet Noter Mühürü
+        notary_proof = self.notary.notarize_decision(
+            action="BUY",
+            inst_id=plan.inst_id,
+            plan=plan,
+            reasons=["4 Ayak Oybirliği ile Alım"],
+            timestamp_str=str(time.time()),
+        )
 
         if dry_run:
             log.info("[DRY RUN] Emir simüle edildi: %s", command_preview)
@@ -51,13 +62,14 @@ class OrderExecutor:
                 "fill_px": plan.entry_price,
                 "fill_sz": plan.size,
                 "attached_tpsl": {"tp": plan.tp_price, "sl": plan.sl_price},
+                "notary": notary_proof,
             }
 
         log.info("OKX Borsasına Emir İletiliyor: %s", command_preview)
 
         try:
             raw_res = self.okx.submit(cli_args)
-            return self._parse_execution_response(raw_res, plan, cl_ord_id, command_preview)
+            return self._parse_execution_response(raw_res, plan, cl_ord_id, command_preview, notary_proof)
         except OKXCLIError as e:
             log.error("Emir gönderimi başarısız: %s", e)
             return {
@@ -65,6 +77,7 @@ class OrderExecutor:
                 "status": "CLI_ERROR",
                 "error": str(e),
                 "command": command_preview,
+                "notary": notary_proof,
             }
 
     def _parse_execution_response(
@@ -73,6 +86,7 @@ class OrderExecutor:
         plan: OrderPlan,
         cl_ord_id: str,
         command_preview: str,
+        notary_proof: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Borsa yanıtını inceler."""
         # OKX formatı: [{'clOrdId': '...', 'ordId': '...', 'sCode': '0', 'sMsg': ''}]
@@ -105,6 +119,7 @@ class OrderExecutor:
                 "fill_sz": fill_info.get("fillSz", plan.size),
                 "attached_tpsl": {"tp": plan.tp_price, "sl": plan.sl_price},
                 "raw_response": item,
+                "notary": notary_proof,
             }
 
         return {
@@ -113,6 +128,7 @@ class OrderExecutor:
             "error": f"sCode={s_code}, sMsg={s_msg}",
             "command": command_preview,
             "raw_response": item,
+            "notary": notary_proof,
         }
 
     def _check_fill(self, inst_id: str, ord_id: str) -> dict[str, Any]:
