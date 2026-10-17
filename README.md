@@ -1,4 +1,4 @@
-                                                # 🛡️ NEXA-TRADER
+                                                 #🛡️ NEXA-TRADER
 
 <div align="center">
 
@@ -91,6 +91,8 @@ flowchart TD
 ```
 
 ---
+
+<img width="952" height="615" alt="Screenshot 2026-10-17 at 6 49 09 PM" src="https://github.com/user-attachments/assets/8a994beb-5206-42da-9da5-78e136fe69c9" />
 
 ## 🎯 4 Ayaklı Analiz Matrisi
 
