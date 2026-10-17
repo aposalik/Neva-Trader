@@ -12,3 +12,6 @@ __pycache__/
 node_modules/
 *.py[cod]
 .DS_Store
+website/.runtime/
+.agents/skills/anatomy/
+skills-lock.json

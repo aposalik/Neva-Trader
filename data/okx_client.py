@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import shutil
 import subprocess
 import sys
@@ -71,10 +72,17 @@ class OKXClient:
 
         for i in range(attempts):
             try:
+                # The local OpenClaw proxy can interfere with OKX TLS/API traffic.
+                # Invoke the trusted OKX CLI directly; credentials remain in the
+                # CLI's own protected configuration and never enter this process.
+                direct_env = os.environ.copy()
+                for key in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"):
+                    direct_env.pop(key, None)
                 proc = subprocess.run(
                     [self.exe, *flags, *args],
                     capture_output=True, text=True, encoding="utf-8", errors="replace",
                     timeout=self.timeout,
+                    env=direct_env,
                 )
                 if proc.returncode != 0:
                     msg = (proc.stderr or proc.stdout or "").strip()[:400]

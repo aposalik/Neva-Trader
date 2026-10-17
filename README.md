@@ -1,305 +1,361 @@
-# 🛡️ NEXA-TRADER (SENTINEL)
+# 🛡️ Nexa-Trader
 
 <div align="center">
 
-**OKX Agent Trade Kit × Avalanche C-Chain Destekli Çok Kaynaklı Otonom Day Trading Ajanı**  
-*Agentic Hackathon Ankara 2026 (OKX TR × Team1 Türkiye) için Geliştirilmiştir*
+**AVAX-USDT için açıklanabilir, risk kontrollü ve demo-öncelikli işlem karar sistemi**
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![OKX ATK](https://img.shields.io/badge/OKX_ATK-v1.4.8%2B-000000?style=for-the-badge&logo=okx&logoColor=white)](https://github.com/okx/agent-trade-kit)
-[![Avalanche](https://img.shields.io/badge/Avalanche-C--Chain_Fuji-E84142?style=for-the-badge&logo=avalanche&logoColor=white)](https://avax.network)
-[![Tests](https://img.shields.io/badge/Pytest-28%2F28_Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
-[![Security](https://img.shields.io/badge/Guardrail-Fail--Closed-blueviolet?style=for-the-badge)](https://github.com/aposalik/Neva-Trader)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+*OKX Agent Trade Kit + Avalanche C-Chain veri kaynaklarıyla geliştirilen hackathon projesi*
 
-[Genel Bakış](#-genel-bakış) •
-[Sistem Mimarisi](#-sistem-mimarisi-architecture) •
-[4 Ayaklı Analiz Matrisi](#-4-ayaklı-analiz-matrisi) •
-[Deterministik Koruma](#-deterministik-koruma-guardrails) •
-[Hızlı Başlangıç](#-hızlı-başlangıç-quickstart) •
-[Jüri Senaryoları](#-jüri-altın-demo-senaryoları) •
-[Web3 Noter](#-avalanche-web3-noter-denetimi)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![OKX CLI](https://img.shields.io/badge/OKX_CLI-1.4.8-111111?style=for-the-badge&logo=okx&logoColor=white)](https://github.com/okx/agent-trade-kit)
+[![Tests](https://img.shields.io/badge/Testler-33%20ge%C3%A7ti-2ea44f?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
 
 </div>
 
----
+> [!WARNING]
+> Nexa-Trader finansal tavsiye değildir. Varsayılan çalışma modu **OKX demo hesabıdır**; yine de `--demo-script` gerçek bir demo emri gönderebilir. Emir göndermeden test etmek için `--dry-run` kullanın.
 
-## 📌 Genel Bakış
+## İçindekiler
 
-**Nexa-Trader (Sentinel)**; kripto para piyasalarındaki yapay zeka halüsinasyonlarını, ani piyasa şoklarını ve kontrolsüz emir iletimi risklerini bertaraf etmek amacıyla geliştirilmiş **güvenlik öncelikli (safety-first)** ve **deterministik kurallara bağlı (fail-closed)** otonom bir alım-satım sistemidir.
+- [Nedir?](#nedir)
+- [Mevcut durum](#mevcut-durum)
+- [Mimari](#mimari)
+- [Karar mantığı](#karar-mantığı)
+- [Risk kuralları](#risk-kuralları)
+- [Kurulum](#kurulum)
+- [Çalıştırma](#çalıştırma)
+- [Web kontrol merkezi](#web-kontrol-merkezi)
+- [Test ve doğrulama](#test-ve-doğrulama)
+- [Jüri/demo senaryoları](#jüridemo-senaryoları)
+- [Veri kaynakları ve fallback davranışı](#veri-kaynakları-ve-fallback-davranışı)
+- [Proje yapısı](#proje-yapısı)
+- [Güvenlik sınırları](#güvenlik-sınırları)
+- [Bilinen sınırlamalar](#bilinen-sınırlamalar)
+- [Katkı](#katkı)
 
-BlackRock ve Team1 Türkiye'nin *"Güvenilir Agent"* standartlarını (Kimlik, Araçlar, Sınırlar, İzlenebilirlik) referans alan sistem:
-* **OKX Agent Trade Kit (`@okx_ai/okx-trade-cli` v1.4.8+)** ile doğrudan spot borsa motoruna bağlanır.
-* **4 Bağımsız Sinyal Ayağını (Teknik, On-Chain, Haber, Makro)** oybirliği (unanimous) şartıyla tartar.
-* **Deterministik Risk Kalkanı (Guardrail)** ile sermayeyi matematiksel kurallarla korur.
-* **Avalanche Fuji C-Chain (`AgentNotary.sol`)** akıllı sözleşmesi ile her kararını blokzincir üzerinde değiştirilemez biçimde mühürler.
-* **Varsayılan olarak simülasyondur;** sıfır sermaye kaybı riskiyle çalışır.
+## Nedir?
 
----
+Nexa-Trader, AVAX-USDT için piyasa verilerini dört bağımsız kontrolde birleştirir:
 
-## 🏗️ Sistem Mimarisi (Architecture)
+1. **Teknik analiz:** 1H trendi ve 15m giriş formasyonlarını inceler.
+2. **On-chain analiz:** Avalanche C-Chain ve yapılandırılmış zincir üstü metrikleri değerlendirir.
+3. **Haber/duyarlılık:** AVAX ve BTC haber duyarlılığını kontrol eder.
+4. **Makro takvim:** Yüksek etkili ekonomik olayların işlem blackout penceresini uygular.
 
-Sistem, sorumlulukların kesin çizgilerle ayrıldığı **4 katmanlı reaktif bir boru hattı (pipeline)** mimarisine sahiptir:
+Dört kontrolün tamamı geçmeden işlem fikri `BUY` olmaz. Bir kontrol başarısızsa sistem `NO_TRADE`; sinyaller geçse bile risk kapısı reddederse `BLOCKED` üretir.
+
+## Mevcut durum
+
+- Varsayılan instrument: `AVAX-USDT`
+- Varsayılan hesap modu: **OKX DEMO**
+- Spot işlem mantığı; kaldıraç/marjin/short stratejisi yok
+- Web arayüzünde canlı OKX mumları, demo cüzdanı, P&L, karar kaydı ve demo ajan kontrolü bulunur
+- Web arayüzü canlı hesap modunu açamaz
+- Test durumu: **33 test geçti**
+
+## Mimari
 
 ```mermaid
-flowchart TD
-    subgraph Layer1["1. Veri Toplama & Entegrasyon Katmanı"]
-        OKX["OKX ATK CLI v1.4.8\n(1H/15m Mumlar, Bakiye, Spread)"]
-        AVAX["Avalanche C-Chain RPC\n(Blok Yüksekliği, nAVAX Gaz, Ağ Sağlığı)"]
-        TV["TradingView Takvim API\n(takvim_cek.py - US/DE/EU Yüksek Etkili)"]
-        Gemini["Haber & NLP (Gemini 3.8 / RSS)\n(CoinDesk / TV RSS Duygu Analizi)"]
-    end
-
-    subgraph Layer2["2. Dört Ayaklı Karar & Strateji Motoru"]
-        Tech["Teknik Sinyal\n(EMA 20/50 Kesişimi + Hacim + Mum Formasyonu)"]
-        Onchain["On-Chain Sinyal\n(C-Chain Gaz Aktivitesi + Borsa Rezervi + MVRV)"]
-        News["Haber Sinyali\n(Wall Street NLP Skoru: -1.0 ile +1.0)"]
-        Macro["Makro Blackout Guard\n(Kritik Verilere ±30 dk İşlem Yasağı)"]
-        Consensus{4 Ayak da PASS mı?\nOybirliği Şartı}
-    end
-
-    subgraph Layer3["3. Deterministik Risk & Guardrail Duvarı"]
-        Sizer["Pozisyon Boyutlandırma\n(Kasa Bakiyesinin Maksimum %5'i)"]
-        Guard["Fail-Closed Guardrail Filtresi\n- Maks. %0.15 Spread Tavanı\n- 1:2 R/R (%%1.0 SL / %%2.0 TP)\n- Tek Pozisyon Kilidi\n- Günlük %%3.0 Kill-Switch"]
-    end
-
-    subgraph Layer4["4. İcra, Kayıt & Web3 Noter Katmanı"]
-        Exec["OKX Demo / Live Motoru\n(Atomik Attached TP/SL Emri)"]
-        Audit["Denetim & Raporlama\n(HTML Pano, CSV, Markdown, decisions.log)"]
-        Notary["Avalanche Fuji Akıllı Sözleşmesi\n(AgentNotary.sol - Değiştirilemez Karar Kaydı)"]
-    end
-
-    %% Bağlantılar
-    OKX --> Tech
-    AVAX --> Onchain
-    Gemini --> News
-    TV --> Macro
-
-    Tech --> Consensus
-    Onchain --> Consensus
-    News --> Consensus
-    Macro --> Consensus
-
-    Consensus -->|Evet: BUY Teklifi| Sizer
-    Consensus -->|Hayır: Veto| Guard
-    Sizer --> Guard
-
-    Guard -->|Onay: EXECUTE| Exec
-    Guard -->|Ret: BLOCKED / NO_TRADE| Audit
-    Exec --> Audit
-    Exec --> Notary
+flowchart LR
+    A[OKX market/account] --> B[Data providers]
+    C[Avalanche C-Chain] --> B
+    D[News + macro calendar] --> B
+    B --> E[Technical / on-chain / news / macro]
+    E --> F{4 kontrol PASS?}
+    F -->|Hayır| G[NO_TRADE]
+    F -->|Evet| H[Position sizer]
+    H --> I[Guardrails]
+    I -->|Reddedildi| J[BLOCKED]
+    I -->|Onaylandı| K[Demo executor]
+    G --> L[Audit log]
+    J --> L
+    K --> L
+    L --> M[Reports + web UI]
 ```
 
----
-
-## 🎯 4 Ayaklı Analiz Matrisi
-
-Ajan, piyasada işlem açabilmek için 4 ayağın tamamından onay (`PASS`) almak zorundadır. **Tek bir ayak bile başarısız olursa işlem derhal veto edilir.**
-
-| Sinyal Ayağı | Canlı Veri Kaynağı | Kabul Kriteri (PASS Koşulu) | Veto / Güvenlik Mekanizması |
-| :--- | :--- | :--- | :--- |
-| **1. Teknik Analiz** | OKX ATK CLI (`1H` & `15m` mumlar) | 1H EMA20 > EMA50, Kapanış > EMA20, 20 barlık ortalama hacim teyidi, 15m dönüş formasyonu (Engulfing / Hammer / Morning Star) | Trend zayıfsa veya hacim desteği yoksa alım yapılmaz. |
-| **2. On-Chain Sağlık** | Avalanche C-Chain Public RPC (`api.avax.network`) + CryptoQuant | C-Chain blok üretimi ve gaz akışı aktif, borsa rezerv değişimi negatif ($\Delta < 0$), MVRV 1.0 - 2.5 aralığında | Ağ tıkanıklığında veya borsaya yüklü coin girişi (satış baskısı) anında kilitlenir. |
-| **3. Haber & NLP** | Google Gemini 3.8 Flash + TradingView / CoinDesk RSS | Son 24 saatlik AVAX/BTC haberlerinin duygu skoru $\ge 0.0$ | Negatif regülasyon veya hack haberi geldiğinde tüm alımlar anında veto edilir. |
-| **4. Makro Takvim** | TradingView Economic Calendar (`takvim_cek.py`) + OKX News API | ABD, Almanya ve Euro Bölgesi 3 yıldızlı (yüksek etkili) kritik verilerin olmaması | Açıklamaya **$\pm 30$ dakika** kala sistem otomatik **Blackout** moduna geçer ve işlem açmaz. |
-
----
-
-## 🛡️ Deterministik Koruma (Guardrails)
-
-Yapay zeka modelleri olasılıksal tahmin üretir; ancak para yönetimi **deterministik (kesin kurallı)** olmak zorundadır. `risk/guardrail.py` katmanı kod seviyesinde şu kilitleri uygular:
-
-* 🔒 **Sermaye Koruma Tavanı:** Tek bir işlemde portföy bakiyesinin maksimum **%5.0**'i kullanılır (`max_notional_usd`).
-* 🔒 **Dinamik 1:2 Risk/Kazanç (R/R):** Her alış emrinde borsa motoruna atomik olarak **%1.0 Zarar Durdur (SL)** ve **%2.0 Kâr Al (TP)** seviyeleri kilitlenir (`attached TP/SL`).
-* 🔒 **Likidite & Spread Bariyeri:** Tahtadaki alış-satış makası (spread) **%0.15**'in üzerindeyse piyasa emri gönderilmez.
-* 🔒 **Tek Pozisyon Kilidi:** Cüzdanda halihazırda açık bir AVAX pozisyonu varsa yeni pozisyon açılmaz; sermaye tek varlığa kilitlenmez.
-* 🔒 **Acil Durdurma (Kill-Switch):** Günlük gerçekleşen toplam zarar **%3.0** seviyesine ulaştığı an sistem 24 saat boyunca tüm alımları kilitler.
-
----
-
-## 📁 Proje Modüler Mimarisi
+### Ana karar akışı
 
 ```text
-Nexa-Trader/
-├── main.py                     # Ana orkestrasyon motoru ve CLI arayüzü
-├── config.json                 # Risk eşikleri, bakiye yüzdeleri ve ayak konfigürasyonu
-├── takvim_cek.py               # TradingView ekonomik takvimini çeken ve güncelleyen modül
-├── takvim_verileri.json         # Çekilen 7 günlük yüksek etkili US/DE/EU olay kütüğü
-├── models.py                   # Tip güvenli veri sınıfları (PillarResult, Decision, OrderPlan)
-├── ui.py                       # Zengin terminal panosu ve anlık durum tabloları
-├── utils.py                    # Tarih, JSON ve loglama yardımcı fonksiyonları
-│
-├── data/                       # Veri Toplama Katmanı
-│   ├── okx_client.py           # OKX ATK CLI Python wrapper (salt okunur sorgular)
-│   ├── onchain.py              # Avalanche C-Chain RPC & zincir üstü metrik köprüsü
-│   ├── news.py                 # Gemini NLP & RSS haber duygu analizi motoru
-│   ├── macro.py                # Makro takvim normalizasyonu ve blackout guardrail'i
-│   ├── history.py              # Karar geçmişi analizi ve istatistik üretici
-│   └── trade_history.py        # OKX spot dolumlarını izleyen FIFO PnL takipçisi
-│
-├── strategy/                   # Strateji ve Sinyal Katmanı
-│   ├── signal_engine.py        # 4 ayaklı oybirliği karar matrisi ve agentic reasoning
-│   └── technical.py            # Pandas/NumPy EMA, hacim ve dönüş mumu algoritmaları
-│
-├── risk/                       # Risk ve Güvenlik Katmanı
-│   ├── guardrail.py            # Deterministik güvenlik duvarı (Fail-Closed kontrolörü)
-│   └── position_sizer.py       # Kesin 1:2 R/R pozisyon ve bakiye boyutlandırıcısı
-│
-├── execution/                  # İcra ve Web3 Katmanı
-│   ├── executor.py             # OKX spot emir yürütücüsü (Attached TP/SL ile)
-│   └── notary.py               # Avalanche Fuji C-Chain Web3 noter kayıt modülü
-│
-├── contracts/                  # Akıllı Sözleşmeler
-│   └── AgentNotary.sol         # Avalanche üzerinde doğrulanabilir karar mühürleme kontratı
-│
-├── reports/                    # Canlı Denetim Raporları
-│   ├── decisions_dashboard.html# Web tabanlı interaktif karar panosu
-│   ├── decisions_table.md      # Markdown formatında denetim kütüğü
-│   └── decisions_table.csv     # Excel uyumlu veri tablosu
-│
-└── tests/                      # Kapsamlı Test Paketi (28 Birim Testi)
-    ├── test_guardrail.py       # Risk kilitleri ve R/R testleri
-    ├── test_technical.py       # EMA kesişimleri ve mum formasyonu testleri
-    ├── test_macro.py           # TradingView blackout testleri
-    ├── test_history.py         # Karar geçmişi ve veto analizi testleri
-    ├── test_trade_history.py   # Gerçekleşen PnL ve komisyon testleri
-    ├── test_okx_compat.py      # Borsa CLI uyumluluk testleri
-    └── test_cycle_data_failures.py # Veri kesintisi tolerans testleri
+Gözlem → Veri doğrulama → Dört sinyal → Karar → Risk kapısı → İcra → Denetim kaydı
 ```
 
----
+## Karar mantığı
 
-## 🚀 Hızlı Başlangıç (Quickstart)
+| Durum | Anlamı |
+|---|---|
+| `BUY` | Dört sinyal de geçti ve risk kapısı emir planını onayladı. |
+| `NO_TRADE` | En az bir sinyal hazır değil veya veto verdi; emir gönderilmez. |
+| `BLOCKED` | Sinyaller uygun görünse bile bakiye, spread, pozisyon, günlük limit veya makro guardrail işlemi durdurdu. |
+| `DRY-RUN` | Karar ve emir planı hesaplanır, borsaya emir gönderilmez. |
+| `DEMO` | OKX demo API’si kullanılır; bakiye ve emirler sanaldır. |
+| `LIVE` | CLI’de mevcut olan canlı hesap modu; web kontrolünden kapalıdır ve dikkat gerektirir. |
 
-### 1. Gereksinimler
-* **Python:** 3.10 veya üzeri
-* **Node.js:** v18+ (OKX CLI için)
-* **OKX CLI:** `@okx_ai/okx-trade-cli`
+## Risk kuralları
 
-### 2. Kurulum
+Değerler `config.json` içinden okunur ve `--set-rules` veya CLI parametreleriyle değiştirilebilir.
+
+| Kural | Varsayılan |
+|---|---:|
+| İşlem başına bakiye | `%5` |
+| Stop-loss | `%1` |
+| Take-profit | `%2` |
+| Risk/kazanç | `1:2` |
+| Günlük maksimum işlem | `4` |
+| Günlük maksimum zarar | `%3` |
+| Maksimum spread | `%0.15` |
+| Minimum pozisyon | `5 USDT` |
+
+Ek korumalar:
+
+- Bakiye, ticker, instrument veya açık emir verisi okunamazsa işlem bloke edilir.
+- Mevcut AVAX pozisyonu veya koruma emri varsa yeni pozisyon açılmaz.
+- Pozisyon boyutu `Decimal` hesaplarıyla ve OKX `lotSz`/`tickSz` kurallarıyla yuvarlanır.
+- Karar ve icra sonuçları `decisions.log` ve rapor dosyalarına yazılır.
+
+## Kurulum
+
+### Gereksinimler
+
+- Python `3.10+`
+- Node.js ve npm
+- OKX Agent Trade Kit CLI `1.4.8+`
+- OKX demo hesabı veya yalnızca test için mock/fallback kaynaklar
+
+### Depoyu hazırlama
+
 ```bash
-# 1. Depoyu klonlayın
 git clone https://github.com/aposalik/Neva-Trader.git
 cd Neva-Trader
 
-# 2. Sanal ortamı hazırlayın ve bağımlılıkları kurun
 python3 -m venv .venv
-source .venv/bin/activate       # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-# 3. OKX Agent Trade Kit CLI aracını kurun
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
 npm install -g @okx_ai/okx-trade-cli
-
-# 4. Çevre değişkenleri şablonunu oluşturun
-cp .env.example .env
 ```
 
-### 3. OKX Demo Oturumu Açma
-API anahtarı oluşturmanıza gerek yoktur; OKX CLI tarayıcı üzerinden tek tıkla OAuth doğrulaması yapar:
+### OKX CLI oturumu
+
 ```bash
 okx auth login
 ```
-*(Bakiye kontrolü için: `okx account balance --demo`)*
 
----
-
-## 🏆 Jüri Altın Demo Senaryoları
-
-Jüri sunumunda piyasa o an yatayda olsa bile, ajanın karar alma reflekslerini 3 altın senaryoyla arka arkaya kanıtlayabilirsiniz:
+API anahtarlarını README’ye, kaynak koda veya loglara yazmayın. `.env.example` dosyasını gerekiyorsa `.env` olarak kopyalayın; `.env` commit edilmez.
 
 ```bash
-python main.py --demo-script
+cp .env.example .env
 ```
 
-* **1. Senaryo (Kusursuz Alım):** Tüm ayaklar yeşil $\to$ OKX Demo hesabına \$250'lık AVAX alım emri iletilir; borsa motorunda %1.0 SL ve %2.0 TP atomik kilitlenir.
-* **2. Senaryo (Haber Vetosu):** Teknik göstergeler pozitif ancak piyasada negatif haber var $\to$ Ajan sermayeyi korumak adına alımı **VETO** eder (`NO_TRADE`).
-* **3. Senaryo (Makro Blackout):** Tüm sinyaller alım yönünde ancak ABD TÜFE (CPI) verisine 8 dakika var $\to$ Guardrail işlemi kilitler (`BLOCKED`).
+## Çalıştırma
 
-> **Borsaya Emir Göndermeden Simüle Etmek İçin:**  
-> `python main.py --demo-script --dry-run`
-
----
-
-## 💻 Çalıştırma Modları ve Parametreler
+### Güvenli ilk doğrulama — emir göndermez
 
 ```bash
-# Tek seferlik canlı analiz
-python main.py --once
-
-# Her 30 saniyede bir otonom analiz döngüsü
-python main.py --loop 30
-
-# Sanal makro kriz simülasyonu (TÜFE'ye 8 dk kala)
-python main.py --simulate-event "US CPI in 8m"
-
-# Son 30 günlük kararları ve PnL performansını analiz et
-python main.py --review-history
-
-# TradingView takvimini manuel yenile
-python takvim_cek.py
+.venv/bin/python main.py --once --dry-run
 ```
 
-### Dinamik Risk Parametreleri (Terminalden Özelleştirme)
-```bash
-# Örnek: Bakiyenin %10'u ile gir, %1.5 SL ve %3.0 TP uygula
-python main.py --capital-pct 10.0 --sl-pct 1.5 --tp-pct 3.0
+Bu komut canlı veri kaynaklarını okuyup karar üretir; OKX’e emir göndermez.
 
-# Terminal üzerinden interaktif soru-cevap ile kural belirle
-python main.py --set-rules --loop 30
-```
-
----
-
-## ⛓️ Avalanche Web3 Noter Denetimi
-
-Ajanın verdiği her alım veya veto kararı, yerel dosyalarda tutulduğu gibi **Avalanche Fuji Testnet** üzerindeki [**`contracts/AgentNotary.sol`**](file:///Users/abdullahsalik/.openclaw/workspace/Nexa-Trader/contracts/AgentNotary.sol) akıllı sözleşmesine kriptografik hash olarak mühürlenir:
-
-* **Ağ:** Avalanche Fuji Testnet (Chain ID: `43113`)
-* **Doğrulanabilirlik:** Karar metni, zaman damgası ve sinyal durumu birleştirilerek `keccak256` hash'i alınır.
-* **Şeffaflık:** Jüri veya fon yöneticisi, [Snowtrace Fuji Explorer](https://testnet.snowtrace.io) üzerinden ajanın geçmiş kararlarını ve blok zamanlarını üçüncü bir tarafa ihtiyaç duymadan denetleyebilir.
-
----
-
-## 🧪 Birim Testleri (Verification)
-
-Sistemin tüm matematiksel hesaplamaları, mum formasyonları ve güvenlik kilitleri `pytest` ile test edilmiştir:
+### Tek seferlik demo hesap analizi
 
 ```bash
-pytest -v
+.venv/bin/python main.py --once
 ```
+
+Bu mod OKX demo hesabını kullanır. Sinyaller ve guardrail uygun olursa demo emir akışı çalışabilir.
+
+### Sürekli demo ajanı
+
+```bash
+.venv/bin/python main.py --loop 30
+```
+
+Ajanı `Ctrl+C` ile durdurun. Web kontrol merkezi de sabit olarak bu demo döngüsünü başlatabilir/durdurabilir.
+
+### Risk kurallarını terminalden ayarlama
+
+```bash
+.venv/bin/python main.py --set-rules --loop 30
+```
+
+Kuralları `config.json` dosyasına kalıcı yazmak için:
+
+```bash
+.venv/bin/python main.py --set-rules --save-rules --once --dry-run
+```
+
+CLI ile doğrudan örnek:
+
+```bash
+.venv/bin/python main.py \
+  --capital-pct 5 \
+  --sl-pct 1 \
+  --tp-pct 2 \
+  --max-daily-trades 4 \
+  --max-daily-loss-pct 3 \
+  --once --dry-run
+```
+
+### Yardım
+
+```bash
+.venv/bin/python main.py --help
+```
+
+## Web kontrol merkezi
+
+Web arayüzü; OKX demo hesabı ve OKX market API’sinden gelen verileri yerel olarak gösterir:
+
+- Canlı `1m`, `5m`, `15m`, `1H`, `4H` mum grafiği
+- OKX demo bakiyesi ve AVAX varlığı
+- Gerçekleşen/gerçekleşmemiş P&L
+- Açık emir ve koruma emri sayısı
+- Son karar ve dört sinyal matrisi
+- Demo ajanını başlat/durdur
+- `--set-rules` akışının doğrulanan web karşılığı
+
+Başlatın:
+
+```bash
+.venv/bin/python website/server.py
+```
+
+Ardından açın:
+
+<http://127.0.0.1:8787>
+
+> Web sunucusu varsayılan olarak `127.0.0.1` üzerinde çalışır. Canlı hesap modu, keyfi shell komutları ve web üzerinden serbest emir gönderimi açılmaz.
+
+## Test ve doğrulama
+
+Tüm testleri çalıştırın:
+
+```bash
+.venv/bin/python -m pytest -q
+```
+
+Beklenen mevcut sonuç:
 
 ```text
-============================== test session starts ==============================
-collected 28 items
-
-tests/test_cycle_data_failures.py::test_cycle_blocks_trade_when_balance_cannot_be_read PASSED
-tests/test_guardrail.py::test_position_sizer_exact_rr PASSED
-tests/test_guardrail.py::test_guardrail_spread_block PASSED
-tests/test_guardrail.py::test_guardrail_open_position_block PASSED
-tests/test_guardrail.py::test_guardrail_kill_switch_block PASSED
-tests/test_history.py::test_history_analysis_summarizes_vetoes_and_discloses_missing_pnl PASSED
-tests/test_macro.py::test_tradingview_calendar_event_blocks_trading PASSED
-tests/test_okx_compat.py::test_okx_client_supports_legacy_is_demo_parameter PASSED
-tests/test_technical.py::test_calculate_ema PASSED
-tests/test_technical.py::test_detect_bullish_engulfing_positive PASSED
-tests/test_technical.py::test_detect_hammer_positive PASSED
-tests/test_technical.py::test_detect_morning_star_positive PASSED
-tests/test_trade_history.py::test_tracker_calculates_fee_adjusted_realized_pnl_and_deduplicates PASSED
-...
-============================== 28 passed in 0.43s ==============================
+33 passed
 ```
 
----
+JavaScript/Python sözdizimi kontrolü:
 
-## ⚖️ Dürüst Veri ve Jüri Şeffaflığı
+```bash
+node --check website/app.js
+.venv/bin/python -m py_compile \
+  data/okx_client.py \
+  website/server.py \
+  website/live_data.py \
+  website/agent_control.py
+```
 
-* **Sessiz Sahte Veri Yoktur:** Herhangi bir API (TradingView, OKX veya Avalanche RPC) erişilemez olduğunda sistem asla sahte veri üretmez; durumu loglara yazar ve terminalde açıkça `[FALLBACK: MOCK DATA]` rozetini gösterir.
-* **Spot-Only & Sıfır Likidasyon:** Kaldıraç, marjin veya açığa satış (short) kullanılmaz. Düşüş trendinde veya kararsız piyasada nakitte (USDT) kalınır.
-* **Gizli Anahtar Saklanmaz:** Cüzdan özel anahtarları veya borsa sırları kaynak kodda, loglarda veya commit'lerde asla tutulmaz.
+OKX bağlantısını salt okunur kontrol edin:
 
----
+```bash
+.venv/bin/python test_flow.py
+```
 
-<div align="center">
-Geliştirici Ekip: <b>Abdullah Salık</b> • <b>İrem Yağmur</b> • <b>Yusuf Doğan</b>  
-<i>OKX TR & Avalanche Agentic Hackathon Ankara 2026</i>
-</div>
+## Jüri/demo senaryoları
+
+Üç karar yolunu simüle eder:
+
+```bash
+.venv/bin/python main.py --demo-script --dry-run
+```
+
+| Senaryo | Beklenen sonuç |
+|---|---|
+| Tüm ayaklar yeşil | `BUY` adayı; mevcut pozisyon veya risk guardrail’i yine engelleyebilir. |
+| Negatif haber | `NO_TRADE` |
+| Makro blackout | `BLOCKED` veya `NO_TRADE` |
+
+`--demo-script` tek başına kullanılırsa senaryo 1’de OKX demo hesabına emir gönderme ihtimali vardır. İlk testte her zaman `--dry-run` kullanın.
+
+### Gerçek demo emri
+
+Bu komut demo hesabında emir denemesi yapabilir:
+
+```bash
+.venv/bin/python test_flow.py --submit-demo-order
+```
+
+Bu birim test değildir; OKX demo hesabında dış etki oluşturabilecek bir entegrasyon testidir. Çalıştırmadan önce hesabı ve açık pozisyonları kontrol edin.
+
+## Veri kaynakları ve fallback davranışı
+
+| Kaynak | Kullanım | Başarısızlık davranışı |
+|---|---|---|
+| OKX CLI | Ticker, mum, bakiye, instrument, emir ve dolumlar | Kritik hesap/piyasa verisi yoksa işlem `BLOCKED` olur. |
+| Avalanche C-Chain RPC | On-chain metrikler | Doğrulanamayan metrikler `FALLBACK`/mock olarak etiketlenir. |
+| OKX news / RSS / opsiyonel Gemini | Haber duyarlılığı | Fallback kullanılırsa kaynak etiketi korunur. |
+| TradingView/OKX ekonomik takvim | Makro blackout | Takvim erişimi veya normalizasyon sorunu karar akışına yansıtılır. |
+
+Mock, simulated ve fallback kayıtları gerçek piyasa kanıtı olarak değerlendirilmemelidir.
+
+## Proje yapısı
+
+```text
+Nexa-Trader/
+├── main.py                 # Orkestrasyon motoru ve CLI
+├── config.json             # Risk, teknik ve veri kaynağı ayarları
+├── models.py               # PillarResult, Decision, OrderPlan modelleri
+├── data/
+│   ├── okx_client.py       # OKX CLI sarmalayıcısı
+│   ├── onchain.py          # Avalanche veri erişimi
+│   ├── news.py             # Haber/duyarlılık akışı
+│   ├── macro.py            # Takvim ve blackout kontrolü
+│   ├── history.py          # Karar geçmişi raporu
+│   └── trade_history.py    # FIFO dolum ve P&L takibi
+├── strategy/
+│   ├── technical.py        # EMA, hacim ve mum formasyonları
+│   └── signal_engine.py    # Dört ayaklı karar birleştirme
+├── risk/
+│   ├── guardrail.py        # Fail-closed risk kontrolleri
+│   └── position_sizer.py   # Pozisyon ve TP/SL hesaplama
+├── execution/
+│   ├── executor.py         # Demo/CLI emir yürütme
+│   └── notary.py           # Opsiyonel Avalanche Fuji noter katmanı
+├── website/                # Türkçe varsayılan web kontrol merkezi
+├── contracts/              # AgentNotary.sol
+├── tests/                  # Birim ve entegrasyon uyumluluk testleri
+├── decisions.log           # Yerel karar günlüğü
+└── reports/                # HTML, CSV ve Markdown raporları
+```
+
+## Güvenlik sınırları
+
+- `config.json` içinde `execution.is_demo` varsayılan olarak `true` kalır.
+- `LIVE` modu web arayüzünden etkinleştirilemez.
+- Hassas değerler kaynak koduna veya README’ye eklenmez.
+- `NO_TRADE` ve `BLOCKED` kararları executor’a emir gönderemez.
+- Kritik veri eksikliği işlem lehine değil, güvenli duruş lehine yorumlanır.
+- GitHub’a push etmeden önce `.env`, API anahtarı, secret, passphrase, bakiye ve hesap çıktısı tarayın.
+
+## Bilinen sınırlamalar
+
+- On-chain CryptoQuant benzeri bazı metrikler şu anda fallback/mock olabilir; arayüzde kaynak etiketi kontrol edilmelidir.
+- P&L yalnızca Nexa’nın takip ettiği ve dolum geçmişiyle eşleştirebildiği işlemler için hesaplanır.
+- Aynı paritede Nexa dışından yapılan işlemler FIFO eşleştirmesini belirsizleştirebilir.
+- OKX CLI’nin ağ, TLS, OAuth veya rate-limit sorunları canlı veri panelini geçici olarak erişilemez yapabilir.
+- Makro/haber kaynaklarının erişilebilirliği üçüncü taraf servislere bağlıdır.
+- Fuji noter katmanı ayrı cüzdan/RPC ayarı gerektirir; her yerel kararın zincire yazıldığı varsayılmamalıdır.
+- Bu proje araştırma/hackathon kapsamındadır; üretim sermayesi için bağımsız güvenlik, operasyon ve finans incelemesi yapılmadan kullanılmamalıdır.
+
+## Katkı
+
+1. Özelliği kısa bir feature branch üzerinde geliştirin.
+2. Test ekleyin veya mevcut testleri güncelleyin.
+3. `python -m pytest -q` ve ilgili demo/dry-run komutlarını çalıştırın.
+4. Hassas veri ve yerel runtime dosyalarını commit etmeyin.
+5. Pull request açın; doğrudan `main` branch’e push etmeyin.
+
+## Lisans ve ekip
+
+Bu repository için ayrı bir `LICENSE` dosyası mevcut değil; lisans varsayımı yapmayın. Lisans eklenmesi gerekiyorsa ekip kararıyla ayrıca commit edilmelidir.
+
+Nexa-Trader, OKX TR & Avalanche Agentic Hackathon Ankara 2026 kapsamında geliştirilen bir ekip projesidir.
+
+- Abdullah Salık
+- İrem Yağmur
+- Yusuf Doğan
