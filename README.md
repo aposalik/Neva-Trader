@@ -1,4 +1,4 @@
-# 🛡️ Nexa-Trader
+                                                #🛡️ NEXA-TRADER
 
 <div align="center">
 
@@ -75,9 +75,11 @@ flowchart LR
 
 ### Ana karar akışı
 
-```text
-Gözlem → Veri doğrulama → Dört sinyal → Karar → Risk kapısı → İcra → Denetim kaydı
-```
+<img width="952" height="615" alt="Screenshot 2026-10-17 at 6 49 09 PM" src="https://github.com/user-attachments/assets/8a994beb-5206-42da-9da5-78e136fe69c9" />
+
+## 🎯 4 Ayaklı Analiz Matrisi
+
+Ajan, piyasada işlem açabilmek için 4 ayağın tamamından onay (`PASS`) almak zorundadır. **Tek bir ayak bile başarısız olursa işlem derhal veto edilir.**
 
 ## Karar mantığı
 
@@ -155,29 +157,7 @@ cp .env.example .env
 
 Bu komut canlı veri kaynaklarını okuyup karar üretir; OKX’e emir göndermez.
 
-### Tek seferlik demo hesap analizi
-
-```bash
-.venv/bin/python main.py --once
-```
-
-Bu mod OKX demo hesabını kullanır. Sinyaller ve guardrail uygun olursa demo emir akışı çalışabilir.
-
-### Sürekli demo ajanı
-
-```bash
-.venv/bin/python main.py --loop 30
-```
-
-Ajanı `Ctrl+C` ile durdurun. Web kontrol merkezi de sabit olarak bu demo döngüsünü başlatabilir/durdurabilir.
-
-### Risk kurallarını terminalden ayarlama
-
-```bash
-.venv/bin/python main.py --set-rules --loop 30
-```
-
-Kuralları `config.json` dosyasına kalıcı yazmak için:
+## 💻 Çalıştırma Modları ve Parametreler
 
 ```bash
 .venv/bin/python main.py --set-rules --save-rules --once --dry-run
@@ -325,37 +305,7 @@ Nexa-Trader/
 
 ## Güvenlik sınırları
 
-- `config.json` içinde `execution.is_demo` varsayılan olarak `true` kalır.
-- `LIVE` modu web arayüzünden etkinleştirilemez.
-- Hassas değerler kaynak koduna veya README’ye eklenmez.
-- `NO_TRADE` ve `BLOCKED` kararları executor’a emir gönderemez.
-- Kritik veri eksikliği işlem lehine değil, güvenli duruş lehine yorumlanır.
-- GitHub’a push etmeden önce `.env`, API anahtarı, secret, passphrase, bakiye ve hesap çıktısı tarayın.
-
-## Bilinen sınırlamalar
-
-- On-chain CryptoQuant benzeri bazı metrikler şu anda fallback/mock olabilir; arayüzde kaynak etiketi kontrol edilmelidir.
-- P&L yalnızca Nexa’nın takip ettiği ve dolum geçmişiyle eşleştirebildiği işlemler için hesaplanır.
-- Aynı paritede Nexa dışından yapılan işlemler FIFO eşleştirmesini belirsizleştirebilir.
-- OKX CLI’nin ağ, TLS, OAuth veya rate-limit sorunları canlı veri panelini geçici olarak erişilemez yapabilir.
-- Makro/haber kaynaklarının erişilebilirliği üçüncü taraf servislere bağlıdır.
-- Fuji noter katmanı ayrı cüzdan/RPC ayarı gerektirir; her yerel kararın zincire yazıldığı varsayılmamalıdır.
-- Bu proje araştırma/hackathon kapsamındadır; üretim sermayesi için bağımsız güvenlik, operasyon ve finans incelemesi yapılmadan kullanılmamalıdır.
-
-## Katkı
-
-1. Özelliği kısa bir feature branch üzerinde geliştirin.
-2. Test ekleyin veya mevcut testleri güncelleyin.
-3. `python -m pytest -q` ve ilgili demo/dry-run komutlarını çalıştırın.
-4. Hassas veri ve yerel runtime dosyalarını commit etmeyin.
-5. Pull request açın; doğrudan `main` branch’e push etmeyin.
-
-## Lisans ve ekip
-
-Bu repository için ayrı bir `LICENSE` dosyası mevcut değil; lisans varsayımı yapmayın. Lisans eklenmesi gerekiyorsa ekip kararıyla ayrıca commit edilmelidir.
-
-Nexa-Trader, OKX TR & Avalanche Agentic Hackathon Ankara 2026 kapsamında geliştirilen bir ekip projesidir.
-
-- Abdullah Salık
-- İrem Yağmur
-- Yusuf Doğan
+<div align="center">
+Geliştirici Ekip: <b>Abdullah Salık</b> • <b>İrem Yağmur</b> • <b>Yusuf Doğan</b>  
+<i>OKX TR & Avalanche Agentic Hackathon Ankara 2026</i>
+</div>

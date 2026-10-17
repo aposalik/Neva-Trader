@@ -1,0 +1,7 @@
+{
+  "network": "Avalanche Fuji Testnet",
+  "chainId": 43113,
+  "contractAddress": "0x65d15cec2F1C9a034A95C3d41EEF408142a45472",
+  "deployTx": "369726a86b17433db5c753b0dd87ff3249094d48fce7669f1089c68fe49cc121",
+  "blockNumber": 59606547
+}
