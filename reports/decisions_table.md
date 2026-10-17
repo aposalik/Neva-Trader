@@ -1,6 +1,6 @@
 # NEXA-TRADER (SENTINEL) — KARAR VE İŞLEM GEÇMİŞİ
 
-> **Toplam Kayıt Sayısı:** 119  
+> **Toplam Kayıt Sayısı:** 133  
 > **Kaynak Dosya:** `decisions.log`  
 
 | Zaman (TRT) | Senaryo / Mod | Fiyat (USDT) | Karar | 1.Teknik | 2.OnChain | 3.Haber | 4.Makro | Veto Gerekçesi / Emir Özeti |
@@ -124,3 +124,17 @@
 | 17.10.2026 15:36 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
 | 17.10.2026 15:37 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
 | 17.10.2026 15:38 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:39 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:39 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:40 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:41 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:42 TRT | Canlı Tarama | 9.962 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:42 TRT | Canlı Tarama | 9.931 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:43 TRT | Canlı Tarama | 9.931 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:44 TRT | Canlı Tarama | 9.931 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:45 TRT | Canlı Tarama | 9.931 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:45 TRT | Canlı Tarama | 9.937 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:46 TRT | Canlı Tarama | 9.937 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:47 TRT | Canlı Tarama | 9.925 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 15:48 TRT | Canlı Tarama | 9.925 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.014, EMA50=10.021, Kapanış=9.966) |
+| 17.10.2026 16:47 TRT | Canlı Tarama | 9.829 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=10.001, EMA50=10.015, Kapanış=9.885) |

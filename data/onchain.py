@@ -41,7 +41,7 @@ def fetch_onchain_metrics(
     if rpc_metrics is not None:
         merged_data = dict(base_data)
         merged_data.update(rpc_metrics)
-        return _evaluate_metrics(merged_data, source=Source.LIVE, rpc_info=rpc_metrics)
+        return _evaluate_metrics(merged_data, source=Source.HYBRID, rpc_info=rpc_metrics)
 
     # RPC yanıt vermezse güvenli Fallback
     log.warning("Canlı Avalanche C-Chain verisi alınamadı, mock fallback'e geçiliyor.")
@@ -112,7 +112,7 @@ def _evaluate_metrics(
     if rpc_info:
         blk = rpc_info.get("block_number", 0)
         gas = rpc_info.get("gas_price_navax", 0.0)
-        reasons.append(f"Avalanche C-Chain aktif (Blok #{blk:,}, Gaz: {gas} nAVAX)")
+        reasons.append(f"Avalanche C-Chain (Blok #{blk:,}, Gaz: {gas} nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model]")
 
     # Kural 1: Borsa Rezerv Değişimi (Rezerv düşüyorsa satış baskısı azdır -> Pozitif)
     if reserve_chg < 0:

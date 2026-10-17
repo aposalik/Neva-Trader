@@ -89,3 +89,24 @@ class SignalEngine:
                 updated.append(p)
 
         return updated
+
+def generate_agentic_reasoning(
+    tech: PillarResult,
+    onchain: PillarResult,
+    news: PillarResult,
+    macro: PillarResult,
+    action: str,
+) -> str:
+    """Ajanin 4 ayagi neden sectigini ve kararin gerekcesini ozetleyen AI akil yurutme izi."""
+    if action == "BUY":
+        return "[AGENTIC REASONING] Tum ayaklar oybirligiyle onaylandi: Teknik trend yukari, Avalanche C-Chain gaz/blok akisi saglikli, kurumsal duyarlilik pozitif ve makro blackout yok. Korumali atomik TP/SL ile alim baslatildi."
+    reasons = []
+    if tech.status != Status.PASS:
+        reasons.append("Teknik trend zayif veya 15m donus mumu eksik")
+    if onchain.status != Status.PASS:
+        reasons.append("Avalanche zincir rezervleri veya balina akisi riskli")
+    if news.status != Status.PASS:
+        reasons.append("Gemini AI kurumsal haber skoru negatif (VETO)")
+    if macro.status != Status.PASS:
+        reasons.append("Yuksek etkili makro ekonomik olay penceresi (Blackout)")
+    return f"[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: {' | '.join(reasons)}."

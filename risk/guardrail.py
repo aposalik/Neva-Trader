@@ -73,6 +73,26 @@ class GuardrailManager:
                 self.state["daily_loss_pct"] = round((curr_loss / balance_usdt) * 100.0, 2)
             self._save_state()
 
+    def sync_realized_pnl_from_fills(self, fills: list[dict[str, Any]], balance_usdt: float) -> float:
+        """Gerceklesen borsa islem gecmisinden gunluk toplam zarari hesaplar ve kilit kontrolune isler."""
+        total_loss_usdt = 0.0
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        for f in fills:
+            ts_ms = to_float(f.get("ts") or f.get("fillTime"), 0.0)
+            if ts_ms > 0:
+                f_date = datetime.fromtimestamp(ts_ms / 1000.0, tz=timezone.utc).strftime("%Y-%m-%d")
+                if f_date != today_str:
+                    continue
+            pnl = to_float(f.get("fillPnl"), 0.0)
+            if pnl < 0:
+                total_loss_usdt += abs(pnl)
+        if total_loss_usdt > 0:
+            self.state["daily_loss_usdt"] = total_loss_usdt
+            if balance_usdt > 0:
+                self.state["daily_loss_pct"] = round((total_loss_usdt / balance_usdt) * 100.0, 2)
+            self._save_state()
+        return total_loss_usdt
+
     def validate_execution(
         self,
         plan: OrderPlan,
