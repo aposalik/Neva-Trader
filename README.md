@@ -1,4 +1,4 @@
-# 🛡️ NEXA-TRADER (SENTINEL)
+# 🛡️ NEXA-TRADER
 
 <div align="center">
 
@@ -203,23 +203,6 @@ okx auth login
 
 ---
 
-## 🏆 Jüri Altın Demo Senaryoları
-
-Jüri sunumunda piyasa o an yatayda olsa bile, ajanın karar alma reflekslerini 3 altın senaryoyla arka arkaya kanıtlayabilirsiniz:
-
-```bash
-python main.py --demo-script
-```
-
-* **1. Senaryo (Kusursuz Alım):** Tüm ayaklar yeşil $\to$ OKX Demo hesabına \$250'lık AVAX alım emri iletilir; borsa motorunda %1.0 SL ve %2.0 TP atomik kilitlenir.
-* **2. Senaryo (Haber Vetosu):** Teknik göstergeler pozitif ancak piyasada negatif haber var $\to$ Ajan sermayeyi korumak adına alımı **VETO** eder (`NO_TRADE`).
-* **3. Senaryo (Makro Blackout):** Tüm sinyaller alım yönünde ancak ABD TÜFE (CPI) verisine 8 dakika var $\to$ Guardrail işlemi kilitler (`BLOCKED`).
-
-> **Borsaya Emir Göndermeden Simüle Etmek İçin:**  
-> `python main.py --demo-script --dry-run`
-
----
-
 ## 💻 Çalıştırma Modları ve Parametreler
 
 ```bash
@@ -288,14 +271,6 @@ tests/test_trade_history.py::test_tracker_calculates_fee_adjusted_realized_pnl_a
 ...
 ============================== 28 passed in 0.43s ==============================
 ```
-
----
-
-## ⚖️ Dürüst Veri ve Jüri Şeffaflığı
-
-* **Sessiz Sahte Veri Yoktur:** Herhangi bir API (TradingView, OKX veya Avalanche RPC) erişilemez olduğunda sistem asla sahte veri üretmez; durumu loglara yazar ve terminalde açıkça `[FALLBACK: MOCK DATA]` rozetini gösterir.
-* **Spot-Only & Sıfır Likidasyon:** Kaldıraç, marjin veya açığa satış (short) kullanılmaz. Düşüş trendinde veya kararsız piyasada nakitte (USDT) kalınır.
-* **Gizli Anahtar Saklanmaz:** Cüzdan özel anahtarları veya borsa sırları kaynak kodda, loglarda veya commit'lerde asla tutulmaz.
 
 ---
 
