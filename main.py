@@ -42,6 +42,7 @@ ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "config.json"
 MOCK_DATA_PATH = ROOT / "mock_data.json"
 EVENTS_PATH = ROOT / "events.json"
+CALENDAR_DATA_PATH = ROOT / "takvim_verileri.json"
 STATE_PATH = ROOT / "state.json"
 AUDIT_LOG_PATH = ROOT / "decisions.log"
 REPORTS_DIR = ROOT / "reports"
@@ -139,6 +140,7 @@ class NexaTraderEngine:
             mock_data=self.mock_data,
             events_path=EVENTS_PATH,
             simulate_event_str=simulate_event_str,
+            calendar_path=CALENDAR_DATA_PATH,
         )
 
         # 3. ANALYZE & DECIDE (Sinyal Sentezi)

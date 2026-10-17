@@ -82,6 +82,13 @@ Takvime kritik bir veri (örn: 8 dakika sonra ABD TÜFE) enjekte ederek ajan kor
 python main.py --simulate-event "US CPI in 8m" --once
 ```
 
+### TradingView Takvimini Yenileme
+TradingView'dan bugünden itibaren 7 günlük dönemdeki yüksek etkili ABD/Almanya/Euro Bölgesi olaylarını almak için proje klasöründe:
+```powershell
+python takvim_cek.py
+```
+Veriler `takvim_verileri.json` dosyasına yazılır ve ajan tarafından otomatik olarak makro blackout kontrolünde kullanılır. İnternet veya TradingView erişimi yoksa mevcut JSON dosyası korunur.
+
 ---
 
 ## 4. OKX Arayüzünde Emri Görüntüleme Adımları

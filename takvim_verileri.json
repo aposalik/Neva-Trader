@@ -1,0 +1,44 @@
+{
+  "yuksek_etkili_haberler": [
+    {
+      "tarih_tsi": "20.10 12:00",
+      "tarih_utc": "2026-10-20T09:00:00.000Z",
+      "ulke": "DE",
+      "onem": 3,
+      "baslik": "ZEW Economic Sentiment Index",
+      "aciklanan": null,
+      "beklenti": 31.6,
+      "onceki": 34.7
+    },
+    {
+      "tarih_tsi": "20.10 15:30",
+      "tarih_utc": "2026-10-20T12:30:00.000Z",
+      "ulke": "US",
+      "onem": 3,
+      "baslik": "Housing Starts",
+      "aciklanan": null,
+      "beklenti": 1.3,
+      "onceki": 1.275
+    },
+    {
+      "tarih_tsi": "20.10 15:30",
+      "tarih_utc": "2026-10-20T12:30:00.000Z",
+      "ulke": "US",
+      "onem": 3,
+      "baslik": "Building Permits Prel",
+      "aciklanan": null,
+      "beklenti": 1.4,
+      "onceki": 1.403
+    },
+    {
+      "tarih_tsi": "23.10 10:30",
+      "tarih_utc": "2026-10-23T07:30:00.000Z",
+      "ulke": "DE",
+      "onem": 3,
+      "baslik": "S&P Global Manufacturing PMI Flash",
+      "aciklanan": null,
+      "beklenti": 54,
+      "onceki": 53.9
+    }
+  ]
+}
