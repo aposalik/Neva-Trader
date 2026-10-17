@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from types import SimpleNamespace
 
 from data import okx_client
 from data.okx_client import OKXClient
@@ -15,6 +16,24 @@ def test_okx_client_supports_legacy_is_demo_parameter(monkeypatch):
 
     assert client.demo is False
     assert client.trade_flags[0] == "--live"
+
+
+def test_okx_subprocess_bypasses_interfering_proxy(monkeypatch):
+    monkeypatch.setattr(okx_client.shutil, "which", lambda _: "okx")
+    monkeypatch.setenv("HTTP_PROXY", "http://local-proxy.invalid")
+    monkeypatch.setenv("HTTPS_PROXY", "http://local-proxy.invalid")
+    captured = {}
+
+    def fake_run(*args, **kwargs):
+        captured["env"] = kwargs["env"]
+        return SimpleNamespace(returncode=0, stdout='[{"last":"9.5"}]', stderr="")
+
+    monkeypatch.setattr(okx_client.subprocess, "run", fake_run)
+    client = OKXClient(is_demo=True, max_retries=1)
+
+    assert client._run(["market", "ticker", "AVAX-USDT"])[0]["last"] == "9.5"
+    assert "HTTP_PROXY" not in captured["env"]
+    assert "HTTPS_PROXY" not in captured["env"]
 
 
 def test_legacy_balance_and_ticker_helpers():

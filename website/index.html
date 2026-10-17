@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Nexa-Trader dört bağımsız piyasa sinyalini açıklanabilir ve risk kontrollü tek karara dönüştürür.">
+  <title>Nexa-Trader — Dört sinyal. Tek disiplinli karar.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">İçeriğe geç</a>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="Nexa-Trader ana sayfa">
+      <img class="brand-logo" src="assets/logo-nexa-trader.png" alt="" aria-hidden="true">
+      <span>NEXA//TRADER</span>
+    </a>
+    <nav class="nav" aria-label="Ana navigasyon">
+      <a href="#how">Nasıl düşünüyor</a>
+      <a href="#terminal">Kontrol merkezi</a>
+      <a href="#audit">Kayıtlar</a>
+      <a href="about.html">Hakkımızda</a>
+    </nav>
+    <div class="header-actions"><div class="language-switch" aria-label="Dil seçimi"><a class="active" href="index.html" lang="tr" aria-current="page">TR</a><a href="index-en.html" lang="en">EN</a></div><a class="header-cta" href="#terminal"><span class="pulse-dot"></span> Konsolu aç</a></div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+      <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span></span> OTONOM KARAR ALTYAPISI</p>
+        <h1 id="hero-title">Dört sinyal gelir.<br><em>Tek güvenli karar</em> çıkar.</h1>
+        <p class="hero-lead">Nexa’yı dört dikkatli yardımcı gibi düşünün. Biri grafiği okur, biri zinciri kontrol eder, biri haberleri dinler, diğeri takvimi izler. İçlerinden biri tehlike görürse Nexa bekler.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#terminal">Canlı muhakemeyi gör <span>↗</span></a>
+          <a class="button button-ghost" href="#how">Dört kontrol nasıl çalışır?</a>
+        </div>
+        <div class="hero-proof" aria-label="Proje ilkeleri">
+          <span><i class="check">✓</i> Açıklanabilir</span>
+          <span><i class="check">✓</i> Önce güvenlik</span>
+          <span><i class="check">✓</i> Tamamen kayıtlı</span>
+        </div>
+      </div>
+
+      <div class="hero-figure reveal delay-1">
+        <div class="figure-label"><span>FIG 05</span><span>SİNYAL BİRLEŞTİRME DÜZENEĞİ</span></div>
+        <iframe src="assets/signal-fusion-tr.html" title="Nexa-Trader dört sinyal birleştirme motorunun etkileşimli izometrik gösterimi" loading="eager" sandbox="allow-scripts"></iframe>
+        <div class="figure-caption"><span>İNCELEMEK İÇİN ÜZERİNE GEL</span><span>4 GİRDİ → 1 KARAR</span></div>
+      </div>
+    </section>
+
+    <section class="metric-ribbon" aria-label="Nexa-Trader temel özellikleri">
+      <article><strong>4</strong><span>bağımsız<br>piyasa kontrolü</span></article>
+      <article><strong>1</strong><span>zorunlu<br>risk kapısı</span></article>
+      <article><strong>100%</strong><span>kararların<br>kayıt oranı</span></article>
+      <article><strong>0</strong><span>güvenlik kurallarında<br>kestirme yol</span></article>
+    </section>
+
+    <section class="section section-how" id="how" aria-labelledby="how-title">
+      <div class="section-heading centered reveal">
+        <p class="eyebrow dark"><span></span> TASARIMIYLA SADE</p>
+        <h2 id="how-title">Dört gözlemci.<br>Her biri tek soruyu yanıtlar.</h2>
+        <p>Gizemli bir kutu yok. Her sinyalin bir görevi, kaynağı ve geçme ya da kalma gerekçesi var.</p>
+      </div>
+
+      <div class="watcher-grid">
+        <article class="watcher-card tint-blue reveal">
+          <span class="card-number">01</span>
+          <div class="pixel-icon chart-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p class="card-kicker">TEKNİK</p>
+          <h3>Trend gerçek mi?</h3>
+          <p>Önce 1 saatlik yönü kontrol eder, sonra güvenli bir 15 dakikalık giriş arar.</p>
+          <span class="plain-link">EMA 20/50 + formasyonlar →</span>
+        </article>
+        <article class="watcher-card tint-lilac reveal delay-1">
+          <span class="card-number">02</span>
+          <div class="pixel-icon chain-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p class="card-kicker">ZİNCİR ÜSTÜ</p>
+          <h3>Ağ sağlıklı mı?</h3>
+          <p>Fiyata güvenmeden önce Avalanche aktivitesini ve piyasa yapısını okur.</p>
+          <span class="plain-link">C-Chain + model →</span>
+        </article>
+        <article class="watcher-card tint-pink reveal delay-2">
+          <span class="card-number">03</span>
+          <div class="pixel-icon news-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p class="card-kicker">DUYARLILIK</p>
+          <h3>Haber akışı destekliyor mu?</h3>
+          <p>AVAX çevresindeki havayı ölçer; haberler olumsuzlaşınca girişleri reddeder.</p>
+          <span class="plain-link">ATK duyarlılığı →</span>
+        </article>
+        <article class="watcher-card tint-mint reveal delay-3">
+          <span class="card-number">04</span>
+          <div class="pixel-icon calendar-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p class="card-kicker">MAKRO</p>
+          <h3>Yakında şok etkili olay var mı?</h3>
+          <p>Yüksek etkili ekonomik açıklamaların çevresine işlem yasağı penceresi koyar.</p>
+          <span class="plain-link">Takvim koruması →</span>
+        </article>
+      </div>
+
+      <div class="rule-statement reveal">
+        <div class="rule-orb" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div>
+          <p class="eyebrow dark"><span></span> EN ÖNEMLİ KURAL</p>
+          <h2>Dört yeşil ışık — yoksa işlem yok.</h2>
+          <p>Bir sinyal henüz emir değildir. Spread, pozisyon boyutu, açık emir, günlük işlem, zarar limiti ve makro risk kontrollerinden de geçmelidir.</p>
+        </div>
+        <a class="button button-dark" href="#terminal">Kararı incele</a>
+      </div>
+    </section>
+
+    <section class="terminal-section" id="terminal" aria-labelledby="terminal-title">
+      <div class="terminal-intro reveal">
+        <div>
+          <p class="eyebrow"><span></span> TERMİNALDEN ÜRÜNE</p>
+          <h2 id="terminal-title">İşlem kontrol merkezi.</h2>
+        </div>
+        <p>Python terminalinde çalışan aynı muhakeme, odaklı bir arayüze taşındı. Bu ekran gerçek denetim kaydını okur; motoru başlatmaz ve işlem güvenliklerini aşmaz.</p>
+      </div>
+
+      <div class="app-shell reveal" data-console aria-busy="true">
+        <aside class="app-sidebar">
+          <a class="app-logo" href="#top" aria-label="Nexa-Trader"><img src="assets/logo-nexa-trader.png" alt=""></a>
+          <nav aria-label="İşlem uygulaması">
+            <button class="side-button active" type="button" aria-label="Genel bakış" title="Genel bakış"><span>⌂</span></button>
+            <button class="side-button" type="button" aria-label="Sinyaller" title="Sinyaller"><span>⌁</span></button>
+            <button class="side-button" type="button" aria-label="Risk" title="Risk"><span>◇</span></button>
+            <button class="side-button" type="button" aria-label="Kayıtlar" title="Kayıtlar"><span>▤</span></button>
+          </nav>
+          <div class="sidebar-bottom"><span class="status-led"></span></div>
+        </aside>
+
+        <div class="app-main">
+          <header class="app-topbar">
+            <div class="pair-identity">
+              <div class="asset-mark"><img src="assets/logo-nexa-trader.png" alt=""></div>
+              <div><strong data-instrument>AVAX-USDT</strong><span>Spot istihbaratı</span></div>
+            </div>
+            <div class="mode-badge demo" data-env-badge><span></span><div><strong>OKX DEMO HESABI</strong><small>Sanal fon · gerçek API</small></div></div>
+            <div class="market-stat"><span>SON FİYAT</span><strong data-price>—</strong></div>
+            <div class="market-stat"><span>SPREAD</span><strong data-spread>—</strong></div>
+            <div class="sync-state"><span class="pulse-dot"></span><div><strong>OKX SENKRONU</strong><small data-updated>bağlanıyor…</small></div></div>
+            <button class="refresh-button" type="button" data-refresh><span>↻</span> Yenile</button>
+          </header>
+
+          <div class="source-truth" data-source-truth>
+            <span class="truth-chip demo">HESAP: OKX DEMO</span>
+            <span class="truth-chip" data-market-source>PİYASA: BAĞLANIYOR</span>
+            <span class="truth-chip safe">SENARYO: KAPALI</span>
+            <p>Bu ekran mock/jüri senaryosu değil; OKX demo hesabını ve OKX piyasa API’sini kullanır.</p>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="chart-panel panel live-chart-panel">
+              <header class="panel-head">
+                <div><span>CANLI OKX MUM GRAFİĞİ</span><strong data-chart-title>AVAX / USDT</strong></div>
+                <div class="timeframes" aria-label="Mum aralığı"><button type="button" data-bar="1m">1m</button><button type="button" data-bar="5m">5m</button><button class="active" type="button" data-bar="15m">15m</button><button type="button" data-bar="1H">1H</button><button type="button" data-bar="4H">4H</button></div>
+              </header>
+              <div class="live-chart" data-live-chart>
+                <canvas data-candle-chart aria-label="OKX canlı mum grafiği"></canvas>
+                <div class="chart-tooltip" data-chart-tooltip hidden></div>
+                <div class="chart-message" data-chart-message>OKX mum verisi bekleniyor…</div>
+              </div>
+              <div class="chart-footer"><span><i class="legend green"></i> <span data-chart-source>OKX bağlantısı bekleniyor</span></span><div class="chart-tools"><button type="button" data-zoom="out" aria-label="Grafiği uzaklaştır">−</button><button type="button" data-zoom="in" aria-label="Grafiği yakınlaştır">+</button><button type="button" data-chart-reset>Sıfırla</button></div><span data-chart-range>—</span></div>
+            </section>
+
+            <section class="decision-panel panel" data-decision-card>
+              <div class="decision-topline"><span>SON KARAR</span><span data-decision-time>—</span></div>
+              <div class="decision-orb" aria-hidden="true"><span></span></div>
+              <p class="decision-label">NEXA DİYOR</p>
+              <h3 data-action>—</h3>
+              <p class="decision-copy" data-reason>Kayıtlı karar bekleniyor…</p>
+              <div class="decision-rule"><span>KURAL</span><strong>4 / 4 + risk kapısı</strong></div>
+            </section>
+
+            <section class="wallet-panel panel">
+              <header class="panel-head"><div><span>OKX DEMO CÜZDANI</span><strong>Varlık ve performans</strong></div><span class="demo-account-chip">SANAL FON</span></header>
+              <div class="wallet-metrics">
+                <article><span>TOPLAM DEĞER</span><strong data-wallet-total>—</strong><small>USDT</small></article>
+                <article><span>KULLANILABİLİR</span><strong data-wallet-usdt>—</strong><small>USDT</small></article>
+                <article><span>AVAX</span><strong data-wallet-avax>—</strong><small data-wallet-avax-value>— USDT</small></article>
+                <article class="pnl-card"><span>GERÇEKLEŞEN K/Z</span><strong data-realized-pnl>—</strong><small>USDT</small></article>
+                <article class="pnl-card"><span>AÇIK K/Z</span><strong data-unrealized-pnl>—</strong><small>USDT</small></article>
+              </div>
+              <div class="wallet-footer"><span>Açık lot: <strong data-open-lots>0</strong></span><span>Açık emir: <strong data-open-orders>0</strong></span><span>Koruma emri: <strong data-protection-orders>0</strong></span><span data-wallet-sync>—</span></div>
+            </section>
+
+            <section class="agent-panel panel">
+              <header class="panel-head"><div><span>AJAN KONTROLÜ</span><strong>30 saniyelik otonom döngü</strong></div><span class="agent-state stopped" data-agent-state>DURDU</span></header>
+              <div class="agent-controls"><div class="agent-power"><span class="power-orb" data-power-orb></span><div><strong data-agent-copy>Ajan çalışmıyor</strong><small>Yalnızca OKX demo hesabı</small></div></div><div class="agent-buttons"><button class="control-button start" type="button" data-agent-start>Ajanı başlat</button><button class="control-button stop" type="button" data-agent-stop disabled>Ajanı durdur</button></div><p class="control-feedback" data-control-feedback>Canlı hesap modu web arayüzünden açılamaz.</p></div>
+            </section>
+
+            <section class="signal-panel panel">
+              <header class="panel-head"><div><span>İSTİHBARAT MATRİSİ</span><strong>Dört bağımsız kontrol</strong></div><span class="mini-note">CANLI KAYIT VERİSİ</span></header>
+              <div class="signal-grid" data-pillars><article class="signal-card skeleton"></article><article class="signal-card skeleton"></article><article class="signal-card skeleton"></article><article class="signal-card skeleton"></article></div>
+            </section>
+
+            <section class="risk-panel panel">
+              <header class="panel-head"><div><span>RİSK KURALLARI</span><strong>Ajan başlamadan kaydet</strong></div><span class="shield-chip">KORUMALAR AÇIK</span></header>
+              <form class="rules-form" data-rules-form>
+                <label><span>İşlem sermayesi</span><div><input type="number" name="positionSizePct" min="0.1" max="20" step="0.1" required><b>%</b></div></label>
+                <label><span>Zarar durdur</span><div><input type="number" name="stopLossPct" min="0.1" max="10" step="0.1" required><b>%</b></div></label>
+                <label><span>Kâr al</span><div><input type="number" name="takeProfitPct" min="0.1" max="30" step="0.1" required><b>%</b></div></label>
+                <label><span>Günlük işlem limiti</span><div><input type="number" name="maxDailyTrades" min="1" max="20" step="1" required><b>#</b></div></label>
+                <label><span>Günlük kill-switch</span><div><input type="number" name="maxDailyLossPct" min="0.1" max="20" step="0.1" required><b>%</b></div></label>
+                <div class="rr-preview"><span>R / R</span><strong data-rr-preview>1 : 2.00</strong></div>
+                <button class="rules-save" type="submit">Kuralları kaydet</button>
+              </form>
+              <p class="rules-note">Bu form, terminaldeki --set-rules akışının doğrulanan web karşılığıdır. Ajan çalışırken değişiklik kilitlenir.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section audit-section" id="audit" aria-labelledby="audit-title">
+      <div class="section-heading split reveal">
+        <div><p class="eyebrow dark"><span></span> KARA KUTU YOK</p><h2 id="audit-title">Her “neden” kayıt altında.</h2></div>
+        <p>Gerekçesi olmayan bir karara güvenilemez. Nexa her döngünün kaynağını, sonucunu ve veto nedenini kaydeder; böylece insanlar sonradan ne olduğunu inceleyebilir.</p>
+      </div>
+
+      <div class="audit-layout">
+        <div class="audit-table-wrap reveal">
+          <div class="table-toolbar"><strong>SON KARARLAR</strong><span data-total-decisions>— kayıtlı döngü</span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Zaman</th><th>Fiyat</th><th>Karar</th><th>Teknik</th><th>Zincir üstü</th><th>Haber</th><th>Makro</th></tr></thead>
+              <tbody data-history><tr><td colspan="7">Karar geçmişi yükleniyor…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="audit-summary reveal delay-1">
+          <p class="card-kicker">KARAR DAĞILIMI</p>
+          <div class="donut" data-donut><span data-donut-total>0</span><small>TOPLAM</small></div>
+          <div class="mix-legend">
+            <div><i class="green"></i><span>BUY</span><strong data-count-buy>0</strong></div>
+            <div><i class="amber"></i><span>İŞLEM YOK</span><strong data-count-wait>0</strong></div>
+            <div><i class="red"></i><span>ENGELLENDİ</span><strong data-count-blocked>0</strong></div>
+          </div>
+          <p class="audit-note">Yüksek İŞLEM YOK sayısı hareketsizlik değildir. Koşullar eksikken sistemin sermayeyi koruduğunu gösterir.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="closing-section">
+      <div class="closing-orbit" aria-hidden="true"><i></i><i></i><i></i><span>N</span></div>
+      <p class="eyebrow"><span></span> DİSİPLİN İÇİN TASARLANDI</p>
+      <h2>Daha fazla işlem değil.<br><em>Daha iyi gerekçeler.</em></h2>
+      <p>Nexa-Trader vaat vermek için değil; açıklanabilir ve risk kontrollü kararlar üretmek için tasarlandı.</p>
+      <a class="button button-primary" href="#terminal">Kontrol merkezine dön</a>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top"><img class="brand-logo" src="assets/logo-nexa-trader.png" alt=""><span>NEXA//TRADER</span></a>
+    <p>AVAX-USDT için otonom piyasa istihbaratı.</p>
+    <p>Araştırma arayüzü · Yatırım tavsiyesi değildir</p>
+  </footer>
+
+  <noscript><div class="noscript">Canlı denetim verilerini yüklemek için JavaScript gereklidir.</div></noscript>
+</body>
+</html>

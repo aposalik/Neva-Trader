@@ -1,0 +1,1059 @@
+{
+  "instrument": "AVAX-USDT",
+  "generatedAt": "2026-10-18T00:57:08+03:00",
+  "latest": {
+    "timestamp": "18.10.2026 00:44 TRT",
+    "action": "NO_TRADE",
+    "reasons": [
+      "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+      "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+    ],
+    "pillars": [
+      {
+        "key": "technical",
+        "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+        "status": "FAIL",
+        "source": "LIVE",
+        "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+        "metrics": {
+          "ema20_1h": 9.915,
+          "ema50_1h": 9.968,
+          "close_1h": 9.898,
+          "volume_ratio": 0.63,
+          "patterns": [],
+          "pullback": true
+        }
+      },
+      {
+        "key": "onchain",
+        "name": "On-Chain (Avalanche C-Chain)",
+        "status": "PASS",
+        "source": "HYBRID",
+        "reason": "Avalanche C-Chain (Blok #97,827,601, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+        "metrics": {
+          "exchange_reserve_change_24h_pct": -1.25,
+          "mvrv_ratio": 1.48,
+          "whale_accumulation_trend": "INCREASING",
+          "as_of": "manuel mock - 2026-10-17",
+          "block_number": 97827601,
+          "tx_count": 4,
+          "gas_price_navax": 5.0,
+          "network_status": "HEALTHY"
+        }
+      },
+      {
+        "key": "news",
+        "name": "Haber & Duyarlılık (ATK Sentiment)",
+        "status": "PASS",
+        "source": "LIVE",
+        "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+        "metrics": {
+          "score": 0.41,
+          "method": "okx_coin_sentiment",
+          "headlines": [
+            "BTC fell below 81000 USDT, 24H decline of 0.89%",
+            "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+            "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day"
+          ]
+        }
+      },
+      {
+        "key": "macro",
+        "name": "Makro Takvim (Blackout Guard)",
+        "status": "PASS",
+        "source": "CANLI: TRADINGVIEW",
+        "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+        "metrics": {
+          "blackout": false,
+          "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+        }
+      }
+    ],
+    "market": {
+      "price": 9.649,
+      "bid": 9.621,
+      "ask": 9.626
+    }
+  },
+  "history": [
+    {
+      "timestamp": "18.10.2026 00:44 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,827,601, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97827601,
+            "tx_count": 4,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "BTC fell below 81000 USDT, 24H decline of 0.89%",
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.649,
+        "bid": 9.621,
+        "ask": 9.626
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:43 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,827,543, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97827543,
+            "tx_count": 3,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "BTC fell below 81000 USDT, 24H decline of 0.89%",
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.649,
+        "bid": 9.636,
+        "ask": 9.639
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:42 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,827,495, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97827495,
+            "tx_count": 3,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "BTC fell below 81000 USDT, 24H decline of 0.89%",
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.649,
+        "bid": 9.639,
+        "ask": 9.643
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:06 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,825,096, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97825096,
+            "tx_count": 1,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.903,
+        "bid": 9.896,
+        "ask": 9.899
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:06 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,825,061, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97825061,
+            "tx_count": 1,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.903,
+        "bid": 9.898,
+        "ask": 9.9
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:05 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,825,026, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97825026,
+            "tx_count": 1,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.903,
+        "bid": 9.899,
+        "ask": 9.9
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:04 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,824,981, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97824981,
+            "tx_count": 1,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.887,
+        "bid": 9.907,
+        "ask": 9.909
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:04 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,824,947, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97824947,
+            "tx_count": 16,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.887,
+        "bid": 9.902,
+        "ask": 9.904
+      }
+    },
+    {
+      "timestamp": "18.10.2026 00:03 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.915, EMA50=9.968, Kapanış=9.898)",
+          "metrics": {
+            "ema20_1h": 9.915,
+            "ema50_1h": 9.968,
+            "close_1h": 9.898,
+            "volume_ratio": 0.63,
+            "patterns": [],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,824,907, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97824907,
+            "tx_count": 1,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.887,
+        "bid": 9.896,
+        "ask": 9.898
+      }
+    },
+    {
+      "timestamp": "17.10.2026 23:44 TRT",
+      "action": "NO_TRADE",
+      "reasons": [
+        "[AGENTIC REASONING] Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik.",
+        "[Teknik Analiz (1H Trend + 15m Formasyon) - FAIL] 1H Trend AŞAĞI/ZAYIF (EMA20=9.916, EMA50=9.969, Kapanış=9.901)"
+      ],
+      "pillars": [
+        {
+          "key": "technical",
+          "name": "Teknik Analiz (1H Trend + 15m Formasyon)",
+          "status": "FAIL",
+          "source": "LIVE",
+          "reason": "1H Trend AŞAĞI/ZAYIF (EMA20=9.916, EMA50=9.969, Kapanış=9.901)",
+          "metrics": {
+            "ema20_1h": 9.916,
+            "ema50_1h": 9.969,
+            "close_1h": 9.901,
+            "volume_ratio": 0.66,
+            "patterns": [
+              "Hammer"
+            ],
+            "pullback": true
+          }
+        },
+        {
+          "key": "onchain",
+          "name": "On-Chain (Avalanche C-Chain)",
+          "status": "PASS",
+          "source": "HYBRID",
+          "reason": "Avalanche C-Chain (Blok #97,823,803, Gaz: 5.0 nAVAX [Canli RPC]) | Rezerv/MVRV [Analitik Model] | Borsa rezervleri 24s'de %-1.25 azalışta (Pozitif) | MVRV sağlıklı bölgede (1.48) | Balina birikimi aktif (INCREASING)",
+          "metrics": {
+            "exchange_reserve_change_24h_pct": -1.25,
+            "mvrv_ratio": 1.48,
+            "whale_accumulation_trend": "INCREASING",
+            "as_of": "manuel mock - 2026-10-17",
+            "block_number": 97823803,
+            "tx_count": 2,
+            "gas_price_navax": 5.0,
+            "network_status": "HEALTHY"
+          }
+        },
+        {
+          "key": "news",
+          "name": "Haber & Duyarlılık (ATK Sentiment)",
+          "status": "PASS",
+          "source": "LIVE",
+          "reason": "ATK Piyasa Duyarlılık Skoru: +0.41 (AVAX: bullish (Boğa: %67, Ayı: %20), BTC: neutral (Boğa: %48, Ayı: %16))",
+          "metrics": {
+            "score": 0.41,
+            "method": "okx_coin_sentiment",
+            "headlines": [
+              "Valued at $33.82 million, two giant whales transferred 416.6941 BTC, wallets dormant for 12 to 13 years",
+              "Michael Saylor: Discussing Bitcoin, Digital Capital, and the Future of Finance at ParaFi Investor Day",
+              "Analyst: Bitcoin reversed on Monday after rising for three consecutive weekends, often showing opposite trends during weekend declines"
+            ]
+          }
+        },
+        {
+          "key": "macro",
+          "name": "Makro Takvim (Blackout Guard)",
+          "status": "PASS",
+          "source": "CANLI: TRADINGVIEW",
+          "reason": "Piyasa sakin, blackout penceresinde olay yok. En yakın 3 yıldızlı olay: DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)",
+          "metrics": {
+            "blackout": false,
+            "next_event": "DE - ZEW Economic Sentiment Index (20.10.2026 12:00 TRT)"
+          }
+        }
+      ],
+      "market": {
+        "price": 9.88,
+        "bid": 9.888,
+        "ask": 9.891
+      }
+    }
+  ],
+  "chart": [
+    {
+      "timestamp": "17.10.2026 19:31 TRT",
+      "price": 9.777
+    },
+    {
+      "timestamp": "17.10.2026 19:32 TRT",
+      "price": 9.777
+    },
+    {
+      "timestamp": "17.10.2026 19:32 TRT",
+      "price": 9.777
+    },
+    {
+      "timestamp": "17.10.2026 19:33 TRT",
+      "price": 9.804
+    },
+    {
+      "timestamp": "17.10.2026 19:34 TRT",
+      "price": 9.809
+    },
+    {
+      "timestamp": "17.10.2026 19:34 TRT",
+      "price": 9.809
+    },
+    {
+      "timestamp": "17.10.2026 19:35 TRT",
+      "price": 9.809
+    },
+    {
+      "timestamp": "17.10.2026 19:36 TRT",
+      "price": 9.803
+    },
+    {
+      "timestamp": "17.10.2026 19:36 TRT",
+      "price": 9.803
+    },
+    {
+      "timestamp": "17.10.2026 19:37 TRT",
+      "price": 9.793
+    },
+    {
+      "timestamp": "17.10.2026 19:38 TRT",
+      "price": 9.793
+    },
+    {
+      "timestamp": "17.10.2026 19:38 TRT",
+      "price": 9.802
+    },
+    {
+      "timestamp": "17.10.2026 19:39 TRT",
+      "price": 9.802
+    },
+    {
+      "timestamp": "17.10.2026 19:40 TRT",
+      "price": 9.788
+    },
+    {
+      "timestamp": "17.10.2026 19:40 TRT",
+      "price": 9.788
+    },
+    {
+      "timestamp": "17.10.2026 19:41 TRT",
+      "price": 9.788
+    },
+    {
+      "timestamp": "17.10.2026 19:42 TRT",
+      "price": 9.792
+    },
+    {
+      "timestamp": "17.10.2026 19:43 TRT",
+      "price": 9.789
+    },
+    {
+      "timestamp": "17.10.2026 19:43 TRT",
+      "price": 9.789
+    },
+    {
+      "timestamp": "17.10.2026 19:44 TRT",
+      "price": 9.789
+    },
+    {
+      "timestamp": "17.10.2026 19:45 TRT",
+      "price": 9.788
+    },
+    {
+      "timestamp": "17.10.2026 19:45 TRT",
+      "price": 9.78
+    },
+    {
+      "timestamp": "17.10.2026 19:48 TRT",
+      "price": 9.765
+    },
+    {
+      "timestamp": "17.10.2026 19:52 TRT",
+      "price": 9.756
+    },
+    {
+      "timestamp": "17.10.2026 21:28 TRT",
+      "price": 9.868
+    },
+    {
+      "timestamp": "17.10.2026 21:34 TRT",
+      "price": 9.873
+    },
+    {
+      "timestamp": "17.10.2026 23:36 TRT",
+      "price": 9.887
+    },
+    {
+      "timestamp": "17.10.2026 23:36 TRT",
+      "price": 9.883
+    },
+    {
+      "timestamp": "17.10.2026 23:37 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:38 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:39 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:39 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:40 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:41 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:41 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:42 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:43 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:43 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "17.10.2026 23:44 TRT",
+      "price": 9.88
+    },
+    {
+      "timestamp": "18.10.2026 00:03 TRT",
+      "price": 9.887
+    },
+    {
+      "timestamp": "18.10.2026 00:04 TRT",
+      "price": 9.887
+    },
+    {
+      "timestamp": "18.10.2026 00:04 TRT",
+      "price": 9.887
+    },
+    {
+      "timestamp": "18.10.2026 00:05 TRT",
+      "price": 9.903
+    },
+    {
+      "timestamp": "18.10.2026 00:06 TRT",
+      "price": 9.903
+    },
+    {
+      "timestamp": "18.10.2026 00:06 TRT",
+      "price": 9.903
+    },
+    {
+      "timestamp": "18.10.2026 00:42 TRT",
+      "price": 9.649
+    },
+    {
+      "timestamp": "18.10.2026 00:43 TRT",
+      "price": 9.649
+    },
+    {
+      "timestamp": "18.10.2026 00:44 TRT",
+      "price": 9.649
+    }
+  ],
+  "summary": {
+    "total": 230,
+    "actions": {
+      "NO_TRADE": 229,
+      "BLOCKED": 1
+    },
+    "pillarTotals": {
+      "technical": {
+        "FAIL": 230
+      },
+      "onchain": {
+        "PASS": 230
+      },
+      "news": {
+        "PASS": 230
+      },
+      "macro": {
+        "PASS": 230
+      }
+    },
+    "sources": {
+      "LIVE": 507,
+      "MOCK": 11,
+      "FALLBACK": 2,
+      "CANLI: C-CHAIN": 72,
+      "CANLI: TRADINGVIEW": 200,
+      "HYBRID": 128
+    }
+  },
+  "risk": {
+    "positionSizePct": 5.0,
+    "stopLossPct": 1.0,
+    "takeProfitPct": 2.0,
+    "riskRewardRatio": 2.0,
+    "maxDailyTrades": 4,
+    "maxDailyLossPct": 3.0,
+    "maxSpreadPct": 0.15
+  },
+  "session": {
+    "date": "2026-10-17",
+    "tradesCount": 2,
+    "dailyLossPct": 0.0
+  }
+}
