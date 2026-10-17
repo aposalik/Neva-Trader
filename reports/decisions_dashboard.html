@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Nexa-Trader | Karar Denetim Tablosu</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 24px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      color: #38bdf8;
+      font-size: 26px;
+    }
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    th {
+      background: #334155;
+      color: #f1f5f9;
+      text-align: left;
+      padding: 12px 14px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #334155;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    tr:hover {
+      background: #273549;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .badge-buy { background: #15803d; color: #dcfce7; border: 1px solid #22c55e; }
+    .badge-notrade { background: #475569; color: #cbd5e1; }
+    .badge-pass { background: #064e3b; color: #6ee7b7; }
+    .badge-fail { background: #7f1d1d; color: #fca5a5; }
+    .detail { color: #cbd5e1; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Nexa-Trader (Sentinel) — Karar Denetim Tablosu</h1>
+    <div class="subtitle">OKX Agent Trade Kit 4-Ayak Karar Motoru & Guardrail Denetim Raporu | Toplam Karar: 24</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Zaman (TRT)</th>
+          <th>Senaryo / Mod</th>
+          <th>Fiyat</th>
+          <th>Karar</th>
+          <th>1. Teknik</th>
+          <th>2. On-Chain</th>
+          <th>3. Haber</th>
+          <th>4. Makro</th>
+          <th>Veto Gerekçesi / Emir Detayı</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>17.10.2026 11:59 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.041</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.00)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.015, EMA50=10.029, Kapanış=9.993)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:00 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.041</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:01 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.041</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) | US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:02 TRT</td>
+          <td><strong>1/3 - Tüm ayaklar yeşil -> BUY</strong></td>
+          <td>10.041</td>
+          <td><span class="badge badge-buy">BUY</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.62)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">ALIM: - AVAX | TP: - | SL: - | EmirID: DRY-RUN</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:02 TRT</td>
+          <td><strong>2/3 - Negatif haber -> NO TRADE</strong></td>
+          <td>10.041</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-fail">FAIL (-0.45)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">Haber duyarlılığı negatif (-0.45 < 0.0)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:03 TRT</td>
+          <td><strong>3/3 - ABD TÜFE'ye 8 dk -> BLOCKED</strong></td>
+          <td>10.034</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.55)</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td class="detail">US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:07 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.034</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:13 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.068</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:13 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.067</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:14 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.067</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:15 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.073</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:16 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.075</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:16 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.068</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:17 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.067</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:18 TRT</td>
+          <td><strong>Canlı Tarama</strong></td>
+          <td>10.067</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.41)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:23 TRT</td>
+          <td><strong>1/3 - Tüm ayaklar yeşil -> BUY</strong></td>
+          <td>10.075</td>
+          <td><span class="badge badge-buy">BUY</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.62)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">ALIM: - AVAX | TP: - | SL: - | EmirID: DRY-RUN</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:23 TRT</td>
+          <td><strong>2/3 - Negatif haber -> NO TRADE</strong></td>
+          <td>10.085</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-fail">FAIL (-0.45)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">Haber duyarlılığı negatif (-0.45 < 0.0)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 12:24 TRT</td>
+          <td><strong>3/3 - ABD TÜFE'ye 8 dk -> BLOCKED</strong></td>
+          <td>10.085</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.55)</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td class="detail">US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 13:17 TRT</td>
+          <td><strong>1/3 - Tüm ayaklar yeşil -> BUY</strong></td>
+          <td>9.999</td>
+          <td><span class="badge badge-notrade">BLOCKED</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.62)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail"></td>
+        </tr>
+        <tr>
+          <td>17.10.2026 13:17 TRT</td>
+          <td><strong>2/3 - Negatif haber -> NO TRADE</strong></td>
+          <td>9.999</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-fail">FAIL (-0.45)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">Haber duyarlılığı negatif (-0.45 < 0.0)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 13:17 TRT</td>
+          <td><strong>3/3 - ABD TÜFE'ye 8 dk -> BLOCKED</strong></td>
+          <td>10.002</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.55)</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td class="detail">US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 13:20 TRT</td>
+          <td><strong>1/3 - Tüm ayaklar yeşil -> BUY</strong></td>
+          <td>10.004</td>
+          <td><span class="badge badge-notrade">BLOCKED</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.62)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail"></td>
+        </tr>
+        <tr>
+          <td>17.10.2026 13:21 TRT</td>
+          <td><strong>2/3 - Negatif haber -> NO TRADE</strong></td>
+          <td>10.004</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-fail">FAIL (-0.45)</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td class="detail">Haber duyarlılığı negatif (-0.45 < 0.0)</td>
+        </tr>
+        <tr>
+          <td>17.10.2026 13:21 TRT</td>
+          <td><strong>3/3 - ABD TÜFE'ye 8 dk -> BLOCKED</strong></td>
+          <td>10.004</td>
+          <td><span class="badge badge-notrade">NO_TRADE</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><span class="badge badge-pass">PASS (+0.55)</span></td>
+          <td><span class="badge badge-fail">FAIL</span></td>
+          <td class="detail">US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

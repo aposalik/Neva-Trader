@@ -1,30 +1,31 @@
-# Nexa-Trader — Agent Instructions
+# NEXA-TRADER: Agentic Workspace Kuralları ve Geliştirici Talimatları
 
-Read `README.md` and `CONTRIBUTING.md` before making a change. This is a four-team hackathon codebase; keep every change scoped to one owner area.
+Bu proje, 17 Ekim Agentic Hackathon Ankara için geliştirilen, OKX Agent Trade Kit (ATK) tabanlı, 4 sinyal ayaklı ve deterministik risk korumalı bir otonom Day Trading ajanıdır.
 
-## Mandatory safety constraints
+## 1. Mimari Prensipler
+- **4 Sinyal Ayağı + 1 Deterministik Koruma:**
+  1. *Teknik Analiz:* OKX ATK (1H EMA 20/50 + Hacim ortalaması, 15m Price Action / Dönüş Mumları).
+  2. *On-Chain:* CryptoQuant rezervleri, MVRV, balina birikimi.
+  3. *Haber Akışı:* AVAX/BTC duyarlılık analizi (Google Gemini API ile JSON formatında -1.0 ile +1.0 arası).
+  4. *Makro Takvim:* ABD/Almanya 3 yıldızlı veriler (±30 dakika işlem blackout penceresi).
+  5. *Deterministik Risk Koruması (Guardrail):* Executor öncesi geçilmesi zorunlu matematiksel kural motoru.
 
-1. Default execution is simulated. Do not enable real trading or alter `LIVE_TRADING_ENABLED=false` unless the human explicitly requests it.
-2. Never put API keys, account output, IP allowlists, credentials, or raw balances in source, tests, docs, logs, screenshots, commits, PRs, or chat.
-3. An unverified external provider is `FALLBACK: MOCK`, never “live.”
-4. Strategy/LLM code may return only a proposal. Position sizing and executor access remain deterministic and must remain behind `risk/guardrail.py`.
-5. A `BLOCKED` or `NO_TRADE` decision must never invoke an order command.
-6. Do not change ATK execution flags from memory. Verify the installed CLI’s `--help` output and preserve redacted schema evidence.
+- **Dürüst Veri ve Fallback Kuralı:**
+  Canlı veri kaynakları (CryptoQuant, Investing.com) arızalandığında veya kotaya takıldığında sessizce sahte veri üretilmez. Sistem `mock_data.json` verisine geçer ve terminale/loglara açıkça `[FALLBACK: MOCK DATA]` yazar.
 
-## Verification before committing
+- **Sıfır Sermaye Kaybı Riski:**
+  Tüm borsa işlemleri varsayılan olarak `--demo` bayrağı ile çalıştırılır. Canlı emir göndermek için açık onay gerekir.
 
-```bash
-python -m unittest discover -s tests -v
-python main.py --demo-script
-```
+## 2. Modüler Dizin Mimarisi
+Kod tabanında her modül tek bir sorumluluğa sahiptir:
+- `data/`: OKX CLI wrapper, onchain, haber ve makro veri toplayıcıları.
+- `strategy/`: Pandas/Numpy ile EMA, hacim ve mum formasyonları (Engulfing, Hammer, Morning Star) ile 4 ayak sinyal motoru.
+- `risk/`: Bakiye x %5, dinamik 1:2 R/R seviyeleri ve kill-switch/blackout guardrail'i.
+- `execution/`: OKX ATK üzerinden yerleşik atomik attached TP/SL ile emir yürütme.
+- `main.py`: Rich konsol arayüzü, `--once`, `--loop`, `--simulate-event` ve 3 senaryolu `--demo-script` yöneticisi.
 
-For new behavior, add a test for both its allowed and blocked/failure path. Keep `main` green; do not directly push to it.
-
-## Ownership
-
-- Core/integration: `risk/`, `execution/`, `main.py`, tests
-- ATK/data: `data/okx_client.py`, provider adapters
-- Signals: `strategy/`, data fusion
-- Product/demo: `README.md`, `docs/`, demo workflow
-
-Cross-owner changes require a focused PR and review from another team.
+## 3. Çalıştırma Komutları
+- Canlı Döngü: `python main.py --loop 30`
+- Tek Seferlik Analiz: `python main.py --once`
+- Makro Simülasyonu: `python main.py --simulate-event "US CPI in 10m"`
+- Jüri Altın Demo Senaryosu: `python main.py --demo-script`

@@ -1,23 +1,11 @@
-# Python
-.venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-
-# Node / local CLI
-node_modules/
-
-# Environment and secrets
 .env
-.env.*
-!.env.example
-
-# Local data / logs
+logs/
+state.json
 decisions.log
-*.log
-data/*.local.*
-
-# OS/editor
+__pycache__/
+.pytest_cache/
+.venv/
+.zip-import-source
+node_modules/
+*.py[cod]
 .DS_Store
-.vscode/
-.idea/

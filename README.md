@@ -1,217 +1,100 @@
-# Nexa-Trader — Sentinel
+# NEXA-TRADER (SENTINEL): Çok Kaynaklı Otonom Day Trading Ajanı
 
-> **Agentic Hackathon project** — an explainable, safety-first AVAX/USDT trading agent built around OKX Agent Trade Kit (ATK).
+Bu proje, **Agentic Hackathon Ankara 2026** (OKX TR × Team1 Türkiye) için geliştirilmiştir.
+OKX Agent Trade Kit (`@okx_ai/okx-trade-cli` v1.4.8+, `--demo` modu) üzerinde `AVAX/USDT` paritesinde çalışan; 4 sinyal ayağını (Teknik, On-Chain, Haber, Makro) birleştiren ve deterministik risk korumasına (Guardrail) sahip otonom bir AI alım-satım ajanıdır.
 
-Nexa-Trader observes market and contextual signals, produces a trade proposal, then passes it through deterministic safety controls. The agent can demonstrate a paper workflow today; any OKX **demo** order is a deliberate, separately gated action.
+---
 
-```text
-Observe → validate data → propose → deterministic risk gate →
-SIMULATED / approved OKX demo order → audit record → demo UI
+## 1. Mimari: 4 Sinyal Ayağı + 1 Koruma Katmanı
+
+```
+                              +---------------------------------------+
+                              |         SENTINEL DECISION ENGINE      |
+                              +-------------------+-------------------+
+                                                  |
+         +--------------------+-------------------+-------------------+--------------------+
+         | (1. Ayak)          | (2. Ayak)         | (3. Ayak)         | (4. Ayak)          |
+         v                    v                   v                   v                    v
++------------------+ +------------------+ +------------------+ +------------------+ +------------------+
+|   OKX ATK API    | |   CryptoQuant    | |   Haber Analizi  | |  Investing.com   | | DETERMINİSTİK    |
+|  1H Trend (EMA)  | | On-Chain Verisi  | | Google Gemini    | | Ekonomik Takvim  | | RISK GUARDRAIL   |
+| 15m Price Action | | Borsa Rezervi    | | Duyarlılık (-1..)| | 3 Yıldızlı Haber | | (Executor Öncesi |
+| (Hacim + Mumlar) | | (MVRV, Balina)   | | (AVAX / BTC)     | | (±30 dk Blackout)| |   Zorunlu Kapı)  |
++------------------+ +------------------+ +------------------+ +------------------+ +------------------+
 ```
 
-## Why this project
+1. **1. Ayak — Teknik Analiz (OKX ATK):**
+   - 1H Grafikte `EMA 20 > EMA 50`, `Fiyat > EMA 20` ve hacim teyidi (`vol > 5h_avg`).
+   - 15m Grafikte geri çekilme (pullback) sonrası dönüş mumları: **Bullish Engulfing**, **Hammer** veya **Morning Star**.
+2. **2. Ayak — On-Chain Sağlık (CryptoQuant):**
+   - Borsa rezervlerinde azalış (`exchange_reserve < 0`), sağlıklı MVRV oranı (`1.0 - 2.5`), artan balina birikimi.
+3. **3. Ayak — Haber Akışı & Duyarlılık:**
+   - AVAX ve BTC haber başlıklarının Google Gemini API ile duyarlılık analizi (-1.0 .. +1.0). Skor < 0 ise alım veto edilir.
+4. **4. Ayak — Makro Takvim & Blackout (Investing.com):**
+   - ABD, Almanya ve Euro Bölgesi 3 yıldızlı kritik ekonomik verilerden **±30 dakika** önce/sonra yeni işlem açılması kilitlenir.
+5. **+1 Koruma Katmanı — Deterministik Risk Guardrail:**
+   - Her işlemde portföyün sabit **%5.0**'i riske edilir.
+   - **1:2 R/R Oranı:** Stop-Loss %1.2, Take-Profit %2.4.
+   - **Atomik Attached TP/SL:** OKX borsasına tek komutta (`--tpTriggerPx` ve `--slTriggerPx`) iletilir; pozisyon açıldığı mikrosaniyede korumaya alınır.
+   - Kill-Switch: Günlük zarar %3'ü aşarsa sistem kendini kilitler.
 
-The hackathon’s required deliverable is an autonomous agent using Agent Trade Kit. Trading and Avalanche deployment are optional bonuses. We therefore optimise for a reliable, explainable live demo:
+---
 
-- **The model/signal layer proposes — code enforces.** An LLM or external signal cannot choose an unlimited trade amount or bypass a policy check.
-- **No hidden “live” data claims.** Any unavailable integration is visibly marked `FALLBACK: MOCK`.
-- **Fail closed.** Negative context, macro blackout, an excessive spread, a pre-existing position, malformed data, or an invalid proposal results in `NO_TRADE`/`BLOCKED`, never an order.
-- **Paper by default.** The default executor writes a simulated receipt and JSONL audit line; it does not call OKX.
+## 2. Hızlı Kurulum
 
-## Four-team operating model
-
-| Team | Owns | Main paths | First deliverable |
-|---|---|---|---|
-| **1 — Core & Integration** | policy, sizing, guardrails, executor boundaries, release | `risk/`, `execution/`, `main.py`, `tests/` | One end-to-end simulated decision where a blocked decision cannot execute. |
-| **2 — ATK & Market Data** | installed OKX CLI verification, ticker/candle/balance adapter, demo schema evidence | `data/okx_client.py`, `data/` | Redacted proof for CLI version, demo balance, AVAX ticker and candles. |
-| **3 — Intelligence & Signals** | technical, news, on-chain, macro adapters and signal fusion | `strategy/`, `data/news.py`, `data/onchain.py`, `data/macro.py` | One provenance-tagged source or an honest degraded fallback. |
-| **4 — Product, Demo & Pitch** | demo UX, audit presentation, documentation, Avalanche bonus, jury script | `README.md`, `docs/`, presentation assets | Reproducible green/yellow/red flow on the presentation laptop. |
-
-Read **[CONTRIBUTING.md](CONTRIBUTING.md)** before taking a task. It contains the branch, PR, ownership and security rules.
-
-## Quick start — every teammate
-
-### 1. Clone the repository
+### 2.1 Bağımlılıklar
+Node.js (v18+) ve Python 3.10+ gereklidir:
 
 ```bash
-git clone https://github.com/aposalik/Neva-Trader.git
-cd Neva-Trader
-```
+# 1. OKX CLI Kurulumu ve Demo Girişi
+npm install -g @okx_ai/okx-trade-cli
+okx auth login   # Tarayıcıda doğrulama koduyla tek tıkla bağlanın
 
-> The GitHub repository is named `Neva-Trader`; the product inside it is **Nexa-Trader**.
-
-### 2. Create an isolated Python environment
-
-**macOS / Linux**
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
+# 2. Python Kütüphanelerini Yükleyin
 pip install -r requirements.txt
+
+# 3. Ortam Değişkenleri (Opsiyonel Gemini API)
+cp .env.example .env
+# .env dosyasına GEMINI_API_KEY değerinizi ekleyin (yoksa ATK yerleşik duyarlılık kullanılır)
 ```
 
-**Windows PowerShell**
+---
 
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
+## 3. Çalıştırma ve Canlı Jüri Demosu
 
-**Windows Command Prompt**
-
-```cmd
-py -m venv .venv
-.venv\Scripts\activate.bat
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### 3. Install the project-local ATK CLI
-
-Node.js 22+ is recommended. The project pins the CLI under `node_modules`; never rely on a teammate’s unverified global version.
-
+### 3.1 Jüri Altın Demo Senaryosu (ÖNERİLEN)
+Piyasa o an yatayda olsa bile, ajanın tüm yeteneklerini 3 altın senaryoyla arka arkaya kanıtlar:
 ```bash
-npm ci
-npx --no-install okx --version
-```
-
-Expected CLI baseline: `@okx_ai/okx-trade-cli` **1.4.8**.
-
-### 4. Confirm the baseline before changing code
-
-```bash
-python -m unittest discover -s tests -v
 python main.py --demo-script
 ```
+- **Senaryo 1:** Tüm ayaklar yeşil -> OKX Demo'da $250'lık AVAX alımı yapılır, TP/SL kilitlenir.
+- **Senaryo 2:** Teknik pozitif ancak haber skoru negatif -> İşlem veto edilir (`NO TRADE`).
+- **Senaryo 3:** Sinyaller pozitif ancak ABD TÜFE verisine 8 dk var -> Guardrail işlemi kilitler (`BLOCKED`).
 
-Expected result: all tests pass and the terminal shows three scenarios:
-
-1. **EXECUTE** — valid aligned signals; records a **simulated** receipt.
-2. **NO_TRADE** — negative-news veto; no order route is entered.
-3. **BLOCKED** — high-impact macro blackout; no order route is entered.
-
-## Running the agent
-
+### 3.2 Diğer Çalıştırma Modları
 ```bash
-# Run one safe, simulated evaluation
+# Tek seferlik canlı analiz
 python main.py --once
 
-# Re-evaluate on a cadence (seconds)
+# Her 30 saniyede bir otonom analiz döngüsü
 python main.py --loop 30
 
-# Demonstrate a high-impact macro-event block
-python main.py --simulate-event "US CPI in 10m"
+# Sanal makro blackout testi
+python main.py --simulate-event "US CPI in 8m"
 
-# Run the jury-safe deterministic sequence
-python main.py --demo-script
+# Borsaya gerçek emir iletmeden simülasyon (Dry-Run)
+python main.py --dry-run
 ```
 
-### Demo order — deliberately gated
-
+### 3.3 Testleri Çalıştırma
 ```bash
-python main.py --once --execute-demo
+pytest -v
 ```
 
-This is the **only** command that may submit an OKX demo order, and it only does so after every deterministic guardrail passes. It must not be run until Team 2 records the workshop schema verification and the entire team expressly agrees to a sandbox demo. It is not a live-trading command.
+---
 
-## Architecture
+## 4. Dürüst Veri ve Jüri Şeffaflığı (Bilinen Sınırlamalar)
 
-| Layer | Responsibility | Rule |
-|---|---|---|
-| `data/` | OKX read-only wrapper, external-signal adapters, macro blackout lookup | Carry provenance; use transparent fallback rather than inventing data. |
-| `strategy/` | EMA trend, volume confirmation, candlestick pattern, signal matrix | Creates only `BUY` or `NO_TRADE` proposals. |
-| `risk/` | Position size, SL/TP calculation, macro/spread/position constraints | Final deterministic authority before execution. |
-| `execution/` | Simulated receipt or explicitly enabled OKX demo submission | Uses a unique client order id and appends an audit record. |
-| `tests/` | Risk, technical and executor contracts | Every behavioral change needs tests. |
-
-### Existing safety gates
-
-- Spot-long only — no leverage, shorts, or margin paths.
-- Maximum trade notional and risk percentage are in `config.json`.
-- Default settings: 5% risk cap, maximum $250 notional, 1.2% stop, 1:2 risk/reward.
-- High-impact event inside the blackout window blocks a trade.
-- Wide spreads, an active position, invalid sizes and non-BUY proposals block a trade.
-- `LIVE_TRADING_ENABLED=false` remains the default.
-
-## ATK workshop verification — Team 2
-
-Do not implement or modify an executor based on copied screenshots or unverified examples. In the official workshop, run and preserve **redacted** output for:
-
-```bash
-npx --no-install okx --version
-npx --no-install okx account balance --demo --json
-npx --no-install okx market ticker AVAX-USDT --demo --json
-npx --no-install okx market candles AVAX-USDT --bar 1H --limit 50 --demo --json
-npx --no-install okx spot place --help
-```
-
-Record the exact response fields, size/lot requirements, `clOrdId` idempotency behavior, demo flag behavior, TP/SL placement behavior, failure response and cancellation semantics in a PR. Never commit credentials or raw account data.
-
-## Configuration and secrets
-
-- Copy `.env.example` to `.env` only if an optional provider requires it.
-- `.env`, credentials and `decisions.log` are ignored by Git.
-- Never put keys in an issue, PR, commit, screenshot, terminal recording, test fixture or chat.
-- Unavailable providers stay in fixture/degraded mode and must be described that way during the demo.
-
-## Team Git workflow
-
-```bash
-# Start every task from latest main
-git switch main
-git pull --ff-only
-
-# Create a focused branch
-git switch -c feat/<team>-<short-description>
-
-# Validate, commit, publish your branch
-python -m unittest discover -s tests -v
-python main.py --demo-script
-git add <files>
-git commit -m "feat(signals): add source provenance"
-git push -u origin HEAD
-```
-
-Then open a Pull Request to `main`, request one reviewer from a different team, and wait for checks. **Do not push directly to `main`.** The Core & Integration owner merges only green, reviewed PRs.
-
-Recommended GitHub repository settings:
-
-1. Add every teammate as a collaborator (Write access is enough).
-2. Create a `Teams` project board or labels: `team:core`, `team:atk-data`, `team:signals`, `team:product-demo`.
-3. Protect `main`: require a pull request, one approval and passing checks; disable force pushes.
-4. Create GitHub Issues for each scoped delivery and link each PR to its issue.
-
-## Demo runbook
-
-1. Start from a fresh terminal, activate `.venv`.
-2. Run `python main.py --demo-script`.
-3. Explain the three colors: **green = allowed simulated path**, **yellow = needs human caution/block**, **red/no-trade = policy veto**.
-4. Show `decisions.log` only if needed; it includes decisions, policy outcome and mode but never secrets.
-5. If a live provider is unavailable, show its `FALLBACK: MOCK` label and explain the safe degraded behavior.
-
-## Repository layout
-
-```text
-Nexa-Trader/
-├── data/          # read-only ATK wrapper and provenance-aware sources
-├── strategy/      # deterministic technical and signal logic
-├── risk/          # sizing and final guardrails
-├── execution/     # simulated-by-default order boundary
-├── tests/         # unit/contract checks
-├── docs/          # hackathon notes and architecture decisions
-├── main.py        # CLI / demo entry point
-├── config.json    # non-secret risk configuration
-└── CONTRIBUTING.md # four-team collaboration rules
-```
-
-## Before declaring work done
-
-- Tests pass.
-- `--demo-script` works.
-- A blocked/failure path exists and is tested.
-- No secrets, private account data or misleading “live” claims were added.
-- Documentation matches the behavior.
-- The change is merged through a reviewed PR.
+- **Doğrulanmış Canlı Bileşenler:** OKX CLI üzerinden bakiye sorgulama, mum verisi (1H, 15m), ticker, spot alım ve attached TP/SL emirleri gerçek OKX demo motorunda canlı test edilmiş ve doğrulanmıştır.
+- **Fallback Protokolü:** CryptoQuant veya dış haber scraping servisleri kotaya takıldığında sistem sessizce sahte veri üretmez; `mock_data.json` verisine geçer ve terminalde açıkça `[FALLBACK: MOCK DATA]` etiketini gösterir.
+- **Tek Yönlü İşlem (Spot):** İlk MVP'de marjin tasfiye riskinden kaçınmak için sadece Spot alım yapılır; düşüş trendinde nakitte kalınır.

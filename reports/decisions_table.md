@@ -1,0 +1,31 @@
+# NEXA-TRADER (SENTINEL) — KARAR VE İŞLEM GEÇMİŞİ
+
+> **Toplam Kayıt Sayısı:** 24  
+> **Kaynak Dosya:** `decisions.log`  
+
+| Zaman (TRT) | Senaryo / Mod | Fiyat (USDT) | Karar | 1.Teknik | 2.OnChain | 3.Haber | 4.Makro | Veto Gerekçesi / Emir Özeti |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+| 17.10.2026 11:59 TRT | Canlı Tarama | 10.041 | NO_TRADE | FAIL | PASS | PASS (+0.00) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.015, EMA50=10.029, Kapanış=9.993) |
+| 17.10.2026 12:00 TRT | Canlı Tarama | 10.041 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:01 TRT | Canlı Tarama | 10.041 | NO_TRADE | FAIL | PASS | PASS (+0.41) | FAIL | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) | US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ) |
+| 17.10.2026 12:02 TRT | 1/3 - Tüm ayaklar yeşil -> BUY | 10.041 | **BUY** | PASS | PASS | PASS (+0.62) | PASS | ALIM: - AVAX | TP: - | SL: - | EmirID: DRY-RUN |
+| 17.10.2026 12:02 TRT | 2/3 - Negatif haber -> NO TRADE | 10.041 | NO_TRADE | PASS | PASS | FAIL (-0.45) | PASS | Haber duyarlılığı negatif (-0.45 < 0.0) |
+| 17.10.2026 12:03 TRT | 3/3 - ABD TÜFE'ye 8 dk -> BLOCKED | 10.034 | NO_TRADE | PASS | PASS | PASS (+0.55) | FAIL | US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ) |
+| 17.10.2026 12:07 TRT | Canlı Tarama | 10.034 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:13 TRT | Canlı Tarama | 10.068 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:13 TRT | Canlı Tarama | 10.067 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:14 TRT | Canlı Tarama | 10.067 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:15 TRT | Canlı Tarama | 10.073 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:16 TRT | Canlı Tarama | 10.075 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:16 TRT | Canlı Tarama | 10.068 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:17 TRT | Canlı Tarama | 10.067 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:18 TRT | Canlı Tarama | 10.067 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | 1H Trend AŞAĞI/ZAYIF (EMA20=10.017, EMA50=10.029, Kapanış=10.041) |
+| 17.10.2026 12:23 TRT | 1/3 - Tüm ayaklar yeşil -> BUY | 10.075 | **BUY** | PASS | PASS | PASS (+0.62) | PASS | ALIM: - AVAX | TP: - | SL: - | EmirID: DRY-RUN |
+| 17.10.2026 12:23 TRT | 2/3 - Negatif haber -> NO TRADE | 10.085 | NO_TRADE | PASS | PASS | FAIL (-0.45) | PASS | Haber duyarlılığı negatif (-0.45 < 0.0) |
+| 17.10.2026 12:24 TRT | 3/3 - ABD TÜFE'ye 8 dk -> BLOCKED | 10.085 | NO_TRADE | PASS | PASS | PASS (+0.55) | FAIL | US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ) |
+| 17.10.2026 13:17 TRT | 1/3 - Tüm ayaklar yeşil -> BUY | 9.999 | BLOCKED | PASS | PASS | PASS (+0.62) | PASS |  |
+| 17.10.2026 13:17 TRT | 2/3 - Negatif haber -> NO TRADE | 9.999 | NO_TRADE | PASS | PASS | FAIL (-0.45) | PASS | Haber duyarlılığı negatif (-0.45 < 0.0) |
+| 17.10.2026 13:17 TRT | 3/3 - ABD TÜFE'ye 8 dk -> BLOCKED | 10.002 | NO_TRADE | PASS | PASS | PASS (+0.55) | FAIL | US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ) |
+| 17.10.2026 13:20 TRT | 1/3 - Tüm ayaklar yeşil -> BUY | 10.004 | BLOCKED | PASS | PASS | PASS (+0.62) | PASS |  |
+| 17.10.2026 13:21 TRT | 2/3 - Negatif haber -> NO TRADE | 10.004 | NO_TRADE | PASS | PASS | FAIL (-0.45) | PASS | Haber duyarlılığı negatif (-0.45 < 0.0) |
+| 17.10.2026 13:21 TRT | 3/3 - ABD TÜFE'ye 8 dk -> BLOCKED | 10.004 | NO_TRADE | PASS | PASS | PASS (+0.55) | FAIL | US CPI in 8m (±30 dk kuralı gereği işlem BLOKE EDİLDİ) |

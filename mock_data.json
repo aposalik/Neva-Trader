@@ -1,10 +1,85 @@
 {
-  "market": {"price": 28.0, "balance_usdt": 5000.0, "spread_pct": 0.08},
-  "onchain": {"signal": "accumulation", "score": 0.7, "source": "mock-onchain"},
-  "news": {"sentiment": 0.72, "summary": "Positive AVAX ecosystem flow", "source": "mock-news"},
-  "candles": [
-    {"ts": "2026-10-17T06:00:00+00:00", "open": 27.1, "high": 27.4, "low": 27.0, "close": 27.3, "volume": 1100},
-    {"ts": "2026-10-17T07:00:00+00:00", "open": 27.3, "high": 27.8, "low": 27.2, "close": 27.7, "volume": 1450},
-    {"ts": "2026-10-17T08:00:00+00:00", "open": 27.7, "high": 28.2, "low": 27.6, "close": 28.0, "volume": 1800}
+  "_comment": "BU DEĞERLER CANLI DEĞİLDİR. Kullanıldıklarında ekranda [MOCK DATA] / [FALLBACK: MOCK DATA] / [SIMULATED] etiketi görünür.",
+  "onchain": {
+    "exchange_reserve_change_24h_pct": -1.25,
+    "mvrv_ratio": 1.48,
+    "whale_accumulation_trend": "INCREASING",
+    "staking_trend": "STABLE",
+    "as_of": "manuel mock - 2026-10-17"
+  },
+  "news": {
+    "score": 0.0,
+    "has_sentiment": false,
+    "method": "mock",
+    "headlines": []
+  },
+  "macro": {
+    "events": []
+  },
+  "demo_scenarios": [
+    {
+      "name": "1/3 - Tüm ayaklar yeşil -> BUY",
+      "description": "Teknik, on-chain ve haber onaylı; makro takvim CANLI kontrol edilir.",
+      "overrides": {
+        "technical": {
+          "status": "PASS",
+          "reason": "1H EMA20>EMA50, fiyat>EMA20, hacim teyitli; 15m pullback sonrası Bullish Engulfing",
+          "metrics": {"ema20_1h": 10.12, "ema50_1h": 9.98, "volume_ratio": 1.64, "patterns": ["bullish_engulfing"], "pullback": true}
+        },
+        "onchain": {
+          "status": "PASS",
+          "reason": "Borsa rezervi düşüyor, MVRV sağlıklı bölgede, balina birikimi artıyor",
+          "metrics": {"exchange_reserve_change_24h_pct": -1.25, "mvrv_ratio": 1.48, "whale_accumulation_trend": "INCREASING"}
+        },
+        "news": {
+          "status": "PASS",
+          "reason": "Haber duyarlılığı pozitif (0.62 >= 0.0)",
+          "metrics": {"score": 0.62, "method": "simulated", "headlines": ["Avalanche C-Chain daily transactions hit 3-month high (SIMULATED)"]}
+        }
+      }
+    },
+    {
+      "name": "2/3 - Negatif haber -> NO TRADE",
+      "description": "Teknik ve on-chain onaylı, ancak haber skoru negatif.",
+      "overrides": {
+        "technical": {
+          "status": "PASS",
+          "reason": "1H trend yukarı, hacim teyitli; 15m Hammer formasyonu",
+          "metrics": {"ema20_1h": 10.12, "ema50_1h": 9.98, "volume_ratio": 1.41, "patterns": ["hammer"], "pullback": true}
+        },
+        "onchain": {
+          "status": "PASS",
+          "reason": "Borsa rezervi düşüyor, MVRV sağlıklı bölgede",
+          "metrics": {"exchange_reserve_change_24h_pct": -0.8, "mvrv_ratio": 1.52}
+        },
+        "news": {
+          "status": "FAIL",
+          "reason": "Haber duyarlılığı negatif (-0.45 < 0.0)",
+          "metrics": {"score": -0.45, "method": "simulated", "headlines": ["Major Avalanche bridge reports exploit, withdrawals paused (SIMULATED)"]}
+        }
+      }
+    },
+    {
+      "name": "3/3 - ABD TÜFE'ye 8 dk -> BLOCKED",
+      "description": "Sinyaller pozitif; simüle makro olay guardrail tarafından gerçek kod yolunda bloklanır.",
+      "simulate_event": "US CPI in 8m",
+      "overrides": {
+        "technical": {
+          "status": "PASS",
+          "reason": "1H trend yukarı, hacim teyitli; 15m Morning Star",
+          "metrics": {"ema20_1h": 10.12, "ema50_1h": 9.98, "volume_ratio": 1.55, "patterns": ["morning_star"], "pullback": true}
+        },
+        "onchain": {
+          "status": "PASS",
+          "reason": "Borsa rezervi düşüyor, MVRV sağlıklı bölgede",
+          "metrics": {"exchange_reserve_change_24h_pct": -1.1, "mvrv_ratio": 1.47}
+        },
+        "news": {
+          "status": "PASS",
+          "reason": "Haber duyarlılığı pozitif (0.55 >= 0.0)",
+          "metrics": {"score": 0.55, "method": "simulated", "headlines": ["Institutional AVAX inflows rise for third week (SIMULATED)"]}
+        }
+      }
+    }
   ]
 }

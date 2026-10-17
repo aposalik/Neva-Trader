@@ -1,14 +1,59 @@
 {
   "instrument": "AVAX-USDT",
-  "quote_currency": "USDT",
-  "execution_mode": "simulated",
-  "live_trading_enabled": false,
-  "risk_per_trade_pct": 0.05,
-  "max_notional_usd": 250.0,
-  "risk_reward_ratio": 2.0,
-  "stop_loss_pct": 0.012,
-  "min_news_sentiment": 0.0,
-  "macro_blackout_minutes": 30,
-  "max_spread_pct": 0.35,
-  "single_position_only": true
+  "risk": {
+    "position_size_pct": 5.0,
+    "stop_loss_pct": 1.2,
+    "risk_reward_ratio": 2.0,
+    "max_daily_trades": 4,
+    "max_daily_loss_pct": 3.0,
+    "max_spread_pct": 0.15,
+    "min_position_usdt": 5.0
+  },
+  "execution": {
+    "fee_pct": 0.1,
+    "fill_check_retries": 3,
+    "protection_check_retries": 3,
+    "check_delay_sec": 2
+  },
+  "technical": {
+    "trend_bar": "1H",
+    "entry_bar": "15m",
+    "trend_limit": 100,
+    "entry_limit": 50,
+    "ema_fast": 20,
+    "ema_slow": 50,
+    "volume_lookback": 5,
+    "pullback_lookback": 4,
+    "pullback_tolerance_pct": 0.2
+  },
+  "pillars": {
+    "onchain": {
+      "source": "mock",
+      "mvrv_healthy_max": 2.5,
+      "mvrv_top": 3.7
+    },
+    "news": {
+      "source": "live",
+      "coins": ["AVAX", "BTC"],
+      "weights": {"AVAX": 0.6, "BTC": 0.4},
+      "period": "24h",
+      "headline_limit": 5,
+      "min_score": 0.0,
+      "use_llm": true,
+      "gemini_model": "gemini-2.5-flash"
+    },
+    "macro": {
+      "source": "live",
+      "regions": ["united_states", "germany", "euro_area"],
+      "importance": 3,
+      "blackout_minutes": 30,
+      "lookahead_hours": 24
+    }
+  },
+  "cli": {
+    "timeout_sec": 25,
+    "max_retries": 3
+  },
+  "loop_min_interval_sec": 15,
+  "demo_script_pause_sec": 6
 }

@@ -1,46 +1,132 @@
-"""Paper-by-default execution adapter.
+"""OKX Spot Emir Yürütme ve TP/SL Doğrulama Katmanı.
 
-A demo order is only submitted after the caller explicitly opts into `execute_demo`.
-The module never reads or logs credentials; the OKX CLI owns authentication.
+Emir gönderme protokolü:
+  1. okx spot place --instId AVAX-USDT --side buy --ordType market --sz <size>
+     --tdMode cash --tgtCcy base_ccy --tpTriggerPx <tp> --tpOrdPx=-1
+     --slTriggerPx <sl> --slOrdPx=-1 --clOrdId <id>
+  2. Dönen yanıt ayrıştırılır (sCode, ordId).
+  3. Dolum durumu doğrulanır.
 """
 from __future__ import annotations
-import json
-import shutil
-import subprocess
-import uuid
-from dataclasses import asdict
-from datetime import datetime, timezone
-from pathlib import Path
-from risk.guardrail import GuardDecision
-from risk.position_sizer import PositionPlan
+
+import logging
+import time
+from typing import Any
+
+from data.okx_client import OKXClient, OKXCLIError
+from models import OrderPlan
+
+log = logging.getLogger("nexa.executor")
 
 
-class Executor:
-    def __init__(self, *, execute_demo: bool = False, audit_path: Path = Path("decisions.log")):
-        self.execute_demo = execute_demo
-        self.audit_path = audit_path
+class OrderExecutor:
+    def __init__(self, okx: OKXClient, config: dict[str, Any]) -> None:
+        self.okx = okx
+        self.config = config
 
-    def execute(self, *, decision: GuardDecision, position: PositionPlan, instrument: str = "AVAX-USDT") -> dict:
-        decision_id = f"nexa_{uuid.uuid4().hex[:20]}"
-        record = {"at": datetime.now(timezone.utc).isoformat(), "decision_id": decision_id, "instrument": instrument,
-                  "decision": asdict(decision), "position": asdict(position), "mode": "SIMULATED"}
-        if decision.status != "EXECUTE":
-            record["result"] = "ORDER_NOT_SENT"
-        elif not self.execute_demo:
-            record["result"] = "SIMULATED_RECEIPT"
-        else:
-            local_cli = Path("node_modules/.bin/okx")
-            if not shutil.which("okx") and not local_cli.exists():
-                raise RuntimeError("OKX CLI bulunamadı; demo emri gönderilmedi.")
-            prefix = ["okx"] if shutil.which("okx") else ["npx", "--no-install", "okx"]
-            command = [*prefix, "spot", "place", "--instId", instrument, "--side", "buy", "--ordType", "market",
-                       "--sz", str(position.size_avax), "--tdMode", "cash", "--clOrdId", decision_id,
-                       "--tpTriggerPx", str(position.take_profit_price), "--tpOrdPx", "-1",
-                       "--slTriggerPx", str(position.stop_loss_price), "--slOrdPx", "-1", "--demo", "--json"]
-            completed = subprocess.run(command, capture_output=True, text=True, timeout=20)
-            record["mode"] = "OKX_DEMO"
-            record["result"] = "SUBMITTED" if completed.returncode == 0 else "FAILED"
-            record["cli_output"] = completed.stdout if completed.returncode == 0 else completed.stderr
-        with self.audit_path.open("a", encoding="utf-8") as audit_file:
-            audit_file.write(json.dumps(record, ensure_ascii=False) + "\n")
-        return record
+    def execute_plan(
+        self,
+        plan: OrderPlan,
+        dry_run: bool = False,
+    ) -> dict[str, Any]:
+        """Onaylanmış OrderPlan'ı OKX borsa motoruna iletir."""
+        cl_ord_id = f"NX{int(time.time())}"
+        cli_args = self.okx.spot_buy_with_tpsl_args(
+            inst_id=plan.inst_id,
+            size=plan.size,
+            tp_px=plan.tp_price,
+            sl_px=plan.sl_price,
+            cl_ord_id=cl_ord_id,
+        )
+        command_preview = self.okx.preview(cli_args)
+
+        if dry_run:
+            log.info("[DRY RUN] Emir simüle edildi: %s", command_preview)
+            return {
+                "success": True,
+                "status": "SIMULATED_FILLED",
+                "ord_id": f"SIM_ORD_{int(time.time())}",
+                "cl_ord_id": cl_ord_id,
+                "command": command_preview,
+                "fill_px": plan.entry_price,
+                "fill_sz": plan.size,
+                "attached_tpsl": {"tp": plan.tp_price, "sl": plan.sl_price},
+            }
+
+        log.info("OKX Borsasına Emir İletiliyor: %s", command_preview)
+
+        try:
+            raw_res = self.okx.submit(cli_args)
+            return self._parse_execution_response(raw_res, plan, cl_ord_id, command_preview)
+        except OKXCLIError as e:
+            log.error("Emir gönderimi başarısız: %s", e)
+            return {
+                "success": False,
+                "status": "CLI_ERROR",
+                "error": str(e),
+                "command": command_preview,
+            }
+
+    def _parse_execution_response(
+        self,
+        raw_res: Any,
+        plan: OrderPlan,
+        cl_ord_id: str,
+        command_preview: str,
+    ) -> dict[str, Any]:
+        """Borsa yanıtını inceler."""
+        # OKX formatı: [{'clOrdId': '...', 'ordId': '...', 'sCode': '0', 'sMsg': ''}]
+        item: dict[str, Any] = {}
+        if isinstance(raw_res, list) and raw_res and isinstance(raw_res[0], dict):
+            item = raw_res[0]
+        elif isinstance(raw_res, dict):
+            inner = raw_res.get("data")
+            if isinstance(inner, list) and inner and isinstance(inner[0], dict):
+                item = inner[0]
+            else:
+                item = raw_res
+
+        s_code = str(item.get("sCode", item.get("code", "-1")))
+        ord_id = str(item.get("ordId", ""))
+        s_msg = str(item.get("sMsg", item.get("msg", "")))
+
+        if s_code == "0" and ord_id:
+            # 1.5 saniye bekle ve dolumu kontrol et
+            time.sleep(1.5)
+            fill_info = self._check_fill(plan.inst_id, ord_id)
+
+            return {
+                "success": True,
+                "status": fill_info.get("state", "PLACED_ATTACHED_TPSL"),
+                "ord_id": ord_id,
+                "cl_ord_id": cl_ord_id,
+                "command": command_preview,
+                "fill_px": fill_info.get("fillPx", plan.entry_price),
+                "fill_sz": fill_info.get("fillSz", plan.size),
+                "attached_tpsl": {"tp": plan.tp_price, "sl": plan.sl_price},
+                "raw_response": item,
+            }
+
+        return {
+            "success": False,
+            "status": "REJECTED_BY_EXCHANGE",
+            "error": f"sCode={s_code}, sMsg={s_msg}",
+            "command": command_preview,
+            "raw_response": item,
+        }
+
+    def _check_fill(self, inst_id: str, ord_id: str) -> dict[str, Any]:
+        """Emrin dolum durumunu ve gerçekleşen ortalama fiyatı sorgular."""
+        try:
+            details = self.okx.order_details(inst_id, ord_id)
+            state = details.get("state", "unknown")
+            avg_px = float(details.get("avgPx") or 0.0)
+            acc_fill_sz = float(details.get("accFillSz") or 0.0)
+            return {
+                "state": state,
+                "fillPx": avg_px if avg_px > 0 else None,
+                "fillSz": acc_fill_sz if acc_fill_sz > 0 else None,
+            }
+        except Exception as e:
+            log.warning("Emir detayları okunamadı: %s", e)
+            return {"state": "SUBMITTED_CONFIRMED"}

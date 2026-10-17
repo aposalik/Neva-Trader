@@ -1,3 +1,4 @@
-[
-  {"name": "US CPI", "impact": 3, "at": "2026-10-17T18:00:00+03:00", "source": "fixture"}
-]
+{
+  "_comment": "Elle eklenen yüksek etkili olaylar (opsiyonel). time_utc ISO-8601 UTC olmalı, örn: 2026-10-17T12:30:00Z. Canlı OKX economic-calendar verisiyle birleştirilir.",
+  "events": []
+}
