@@ -6,6 +6,7 @@ Windows konsol kod sayfası (cp1254) ve 80 sütun genişlik uyumludur.
 """
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from models import Decision, OrderPlan, PillarResult, Source, Status
@@ -28,7 +29,7 @@ class DashboardRenderer:
     def render_cycle(
         self,
         decision: Decision,
-        balance_usdt: float,
+        balance_usdt: float | None,
         pair: str,
         mode_str: str,
         risk_rules: dict[str, Any] | None = None,
@@ -42,7 +43,8 @@ class DashboardRenderer:
         title_text = Text()
         title_text.append("[*] NEXA-TRADER (SENTINEL) ", style="bold cyan")
         title_text.append(f"| {pair} ", style="bold yellow")
-        title_text.append(f"| Bakiye: ${balance_usdt:,.2f} USDT ", style="bold green")
+        balance_text = f"${balance_usdt:,.2f} USDT" if balance_usdt is not None else "okunamadı"
+        title_text.append(f"| Bakiye: {balance_text} ", style="bold green" if balance_usdt is not None else "bold red")
         title_text.append(f"| Mod: {mode_str} ", style="magenta")
         title_text.append(f"| {decision.timestamp}", style="dim")
 
@@ -83,6 +85,137 @@ class DashboardRenderer:
         else:
             self._render_no_trade_panel(decision)
 
+        self.console.print()
+
+    def render_history_review(self, analysis: dict[str, Any], report_path: Path) -> None:
+        """Render a compact, readable history summary and recommendation panel."""
+        if not HAS_RICH or self.console is None:
+            self._render_history_review_plain(analysis, report_path)
+            return
+
+        period = (
+            f"{analysis['start'].astimezone().strftime('%d.%m.%Y %H:%M')} - "
+            f"{analysis['end'].astimezone().strftime('%d.%m.%Y %H:%M')}"
+        )
+        summary = Text()
+        summary.append(f"Son {analysis['days']} gün", style="bold cyan")
+        summary.append(f"  |  {analysis['record_count']} karar incelendi")
+        summary.append(f"  |  {period}\n", style="dim")
+        summary.append("Kararlar: ", style="bold")
+        summary.append(
+            "  |  ".join(
+                f"{action}: {count}"
+                for action, count in analysis["actions"].most_common()
+            ) or "Henüz karar kaydı yok",
+            style="white",
+        )
+
+        signals = Table(box=ROUNDED, expand=True, border_style="dim")
+        signals.add_column("Sinyal ayağı", style="bold white")
+        signals.add_column("PASS", justify="right", style="green", width=8)
+        signals.add_column("FAIL", justify="right", style="red", width=8)
+        signals.add_column("NEUTRAL", justify="right", style="yellow", width=9)
+        for name, statuses in sorted(
+            analysis["pillar_statuses"].items(),
+            key=lambda item: sum(item[1].values()),
+            reverse=True,
+        ):
+            signals.add_row(
+                name,
+                str(statuses["PASS"]),
+                str(statuses["FAIL"]),
+                str(statuses["NEUTRAL"]),
+            )
+        if not analysis["pillar_statuses"]:
+            signals.add_row("Sinyal ayağı kaydı yok", "0", "0", "0")
+
+        details = Table(box=ROUNDED, expand=True, border_style="dim")
+        details.add_column("İnceleme", style="bold white", width=26)
+        details.add_column("Adet", justify="right", width=8)
+        details.add_column("Ayrıntı", style="dim")
+
+        sources = analysis["data_sources"]
+        if sources:
+            details.add_row(
+                "Veri kaynakları",
+                str(sum(sources.values())),
+                "  |  ".join(f"{name}: {count}" for name, count in sources.most_common()),
+            )
+
+        if analysis["execution_statuses"]:
+            details.add_row(
+                "Emir yanıtları",
+                str(sum(analysis["execution_statuses"].values())),
+                "  |  ".join(
+                    f"{name}: {count}"
+                    for name, count in analysis["execution_statuses"].most_common()
+                ),
+            )
+
+        details.add_row(
+            "Kapanan işlemler",
+            str(analysis["trades"]["closed_count"]),
+            (
+                f"Net PnL: {analysis['trades']['net_pnl_usdt']:.4f} USDT  |  "
+                f"Kazanç oranı: %{analysis['trades']['win_rate_pct']:.1f}"
+                if analysis["trades"]["pnl_trade_count"]
+                else "Henüz ücret sonrası PnL'si doğrulanan kapanış yok"
+            ),
+        )
+        if analysis["trades"]["open_positions"]:
+            details.add_row(
+                "Açık izlenen lot",
+                str(analysis["trades"]["open_positions"]),
+                "Henüz tamamen kapanmadı",
+            )
+        if analysis["trades"]["pending_entries"]:
+            details.add_row(
+                "Dolum bekleyen giriş",
+                str(analysis["trades"]["pending_entries"]),
+                "OKX dolum kaydı henüz görünmedi",
+            )
+        if analysis["trades"]["history_gap"]:
+            details.add_row(
+                "Dolum geçmişi",
+                "UYARI",
+                "Senkronizasyon 3 günden uzun kesilmiş; sonuçlar eksik olabilir",
+            )
+
+        if analysis["trades"]["unknown_pnl_count"]:
+            details.add_row(
+                "PnL doğrulanamayan",
+                str(analysis["trades"]["unknown_pnl_count"]),
+                "Alış maliyeti veya ücret verisi eksik",
+            )
+
+        recommendations = Text()
+        for index, recommendation in enumerate(analysis["recommendations"], 1):
+            if index > 1:
+                recommendations.append("\n")
+            recommendations.append(f"{index}. ", style="bold cyan")
+            recommendations.append(recommendation, style="white")
+
+        self.console.print()
+        self.console.print(Panel(
+            summary,
+            title="[bold cyan]GEÇMİŞ KARAR ANALİZİ[/bold cyan]",
+            border_style="cyan",
+            box=ROUNDED,
+        ))
+        self.console.print(Panel(
+            signals,
+            title="[bold]SİNYAL AYAKLARI (ANALİZ TURU SAYISI)[/bold]",
+            border_style="blue",
+            box=ROUNDED,
+        ))
+        self.console.print(details)
+        self.console.print(Panel(
+            recommendations,
+            title="[bold yellow]ÖNERİLER[/bold yellow]",
+            border_style="yellow",
+            box=ROUNDED,
+        ))
+        self.console.print(Text(f"Rapor: {report_path}", style="dim"))
         self.console.print()
 
     def _status_badge(self, status: Status) -> Text:
@@ -181,7 +314,8 @@ class DashboardRenderer:
 
     def _render_plain(self, d: Decision, bal: float, pair: str, mode: str, risk_rules: dict[str, Any] | None = None) -> None:
         """Rich yuklu degilse temiz konsol ciktisi."""
-        print(f"\n=== NEXA-TRADER | {pair} | Bakiye: ${bal:.2f} | {mode} | {d.timestamp} ===")
+        balance_text = f"${bal:.2f}" if bal is not None else "okunamadı"
+        print(f"\n=== NEXA-TRADER | {pair} | Bakiye: {balance_text} | {mode} | {d.timestamp} ===")
         for p in d.pillars:
             print(f"[{p.status.value}] {p.name} ({p.source.value}): {p.reason}")
         print(f"KARAR: {d.action}")
@@ -191,3 +325,33 @@ class DashboardRenderer:
             print(f"PLAN: Giris=${d.plan.entry_price}, Miktar={d.plan.size}, SL=${d.plan.sl_price}, TP=${d.plan.tp_price}")
         if d.execution:
             print(f"YURUTME: {d.execution.get('status')} (ID: {d.execution.get('ord_id')})")
+
+    @staticmethod
+    def _render_history_review_plain(analysis: dict[str, Any], report_path: Path) -> None:
+        """Keep a compact fallback for terminals without Rich installed."""
+        print(f"\nGEÇMİŞ KARAR ANALİZİ | Son {analysis['days']} gün | {analysis['record_count']} kayıt")
+        print("Kararlar: " + (
+            " | ".join(f"{action}: {count}" for action, count in analysis["actions"].most_common())
+            or "Henüz karar kaydı yok"
+        ))
+        print("\nSİNYAL AYAKLARI (PASS / FAIL / NEUTRAL)")
+        for name, statuses in analysis["pillar_statuses"].items():
+            print(
+                f"  {name}: PASS {statuses['PASS']} | FAIL {statuses['FAIL']} "
+                f"| NEUTRAL {statuses['NEUTRAL']}"
+            )
+        trades = analysis["trades"]
+        print(f"\nKAPANAN İŞLEMLER: {trades['closed_count']}")
+        if trades["pnl_trade_count"]:
+            print(
+                f"  Net gerçekleşmiş PnL: {trades['net_pnl_usdt']:.4f} USDT "
+                f"| Kazanç oranı: %{trades['win_rate_pct']:.1f}"
+            )
+        else:
+            print("  Ücret sonrası PnL'si doğrulanmış kapanış henüz yok.")
+        if trades["history_gap"]:
+            print("  UYARI: 3 günden uzun senkronizasyon boşluğu; dolum geçmişi eksik olabilir.")
+        print("\nÖNERİLER")
+        for index, recommendation in enumerate(analysis["recommendations"], 1):
+            print(f"  {index}. {recommendation}")
+        print(f"\nRapor: {report_path}\n")

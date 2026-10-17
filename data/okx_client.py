@@ -185,6 +185,15 @@ class OKXClient:
     def order_details(self, inst_id: str, ord_id: str) -> dict[str, Any]:
         return _first(self._run(["spot", "get", "--instId", inst_id, "--ordId", ord_id]))
 
+    def spot_fills(self, inst_id: str, ord_id: str | None = None) -> list[dict[str, Any]]:
+        args = ["spot", "fills", "--instId", inst_id]
+        if ord_id:
+            args.extend(["--ordId", ord_id])
+        data = self._run(args)
+        if not isinstance(data, list) or any(not isinstance(fill, dict) for fill in data):
+            raise OKXCLIError("spot fills şeması beklenmedik")
+        return data
+
     def open_orders(self, inst_id: str) -> list[dict[str, Any]]:
         data = self._run(["spot", "orders", "--instId", inst_id])
         return data if isinstance(data, list) else []

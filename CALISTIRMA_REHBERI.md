@@ -92,6 +92,13 @@ Veriler `takvim_verileri.json` dosyasına yazılır ve ajan tarafından otomatik
 ### OKX Akışını Kontrol Etme
 `python test_flow.py` bakiye ve fiyat bilgilerini salt okunur biçimde kontrol eder. Demo alım emri ve attached TP/SL denemek için açıkça `python test_flow.py --submit-demo-order` çalıştırın.
 
+### Geçmiş Kayıtları Analiz Etme
+Son 30 günlük kararları ve kullanıcıya yönelik iyileştirme önerilerini incelemek için:
+```powershell
+python main.py --review-history
+```
+Dönemi değiştirmek için `python main.py --review-history --history-days 7` gibi gün sayısı verin. Özet her sinyal ayağı için PASS/FAIL/NEUTRAL adetlerini gösterir. Rapor `reports/history_analysis.md` dosyasına kaydedilir; izlenen giriş ve kapanış dolumları `trade_history.json` içinde tutulur. Kapanış PnL'si OKX'in gerçek spot dolum fiyatları ve ücretleri üzerinden hesaplanır; dry-run işlemleri ve özellik eklenmeden önceki kayıtlar hesaba katılmaz.
+Normal `--once`, `--loop` ve `--demo-script` çalıştırmalarında karar günlüğü ve rapor otomatik güncellenir. Tek seferlik analiz ve demo sonunda, sürekli modda ilk analizden sonra özet konsolda gösterilir. OKX CLI spot dolum geçmişi sorgusu son 3 günle sınırlı olduğundan uygulamayı 3 günden uzun süre kapalı bırakmak eksik kapanış verisi oluşturabilir. Ayrıca aynı paritede uygulama dışında işlem yapılıyorsa FIFO eşleştirmesi kâr/zararın hangi işleme ait olduğunu kesin ayıramaz. Rapor eksik ya da eşleştirilemeyen PnL için kazanma oranı uydurmaz.
 ---
 
 ## 4. OKX Arayüzünde Emri Görüntüleme Adımları
