@@ -1,15 +1,17 @@
 """Haber Akışı ve Duyarlılık Sağlayıcı (3. Ayak).
 
 1. OKX ATK yerleşik coin-sentiment ve news API'sini sorgular.
-2. GEMINI_API_KEY mevcutsa haber başlıklarını Google Gemini ile -1.0 .. +1.0 arası puanlar.
-3. API yoksa veya başarısız olursa ATK sentiment oranını veya yerel kural motorunu kullanır.
-4. Ağ arızasında şeffaf MOCK fallback devreye girer.
+2. TradingView'ın ana kripto veri sağlayıcılarından (Cointelegraph RSS) canlı haber başlıklarını çeker.
+3. GEMINI_API_KEY mevcutsa haber başlıklarını Google Gemini ile -1.0 .. +1.0 arası puanlar.
+4. API yoksa veya başarısız olursa ATK sentiment oranını veya yerel kural motorunu kullanır.
+5. Ağ arızasında şeffaf MOCK fallback devreye girer.
 """
 from __future__ import annotations
 
 import json
 import logging
 import os
+import xml.etree.ElementTree as ET
 from typing import Any
 
 import requests
@@ -44,10 +46,11 @@ def fetch_news_sentiment(
             metrics={"score": score, "method": "mock_data.json", "headlines": data.get("headlines", [])},
         )
 
-    # Canlı akış denemesi
+    # Canlı akış: Başlıkları topla
     headlines: list[str] = []
+
+    # 1. OKX ATK'den son haber başlıklarını al
     try:
-        # 1. OKX ATK'den son haber başlıklarını al
         latest_news = okx.news_latest(coins=coins, limit=cfg.get("headline_limit", 5))
         for item in latest_news:
             title = (item.get("title") or item.get("summary") or "").strip()
@@ -56,7 +59,16 @@ def fetch_news_sentiment(
     except OKXCLIError as e:
         log.warning("OKX haber başlıkları çekilemedi: %s", e)
 
-    # 2. Gemini API ile başlıkları analiz etmeyi dene
+    # 2. TradingView / Kripto Haber Partner RSS Akışından Takviye Al
+    try:
+        rss_titles = _fetch_tradingview_partner_rss(limit=5)
+        for t in rss_titles:
+            if t not in headlines:
+                headlines.append(t)
+    except Exception as e:
+        log.warning("TradingView partner haber akışı okunamadı: %s", e)
+
+    # 3. Gemini API ile başlıkları analiz etmeyi dene
     gemini_key = os.getenv("GEMINI_API_KEY")
     if gemini_key and headlines and cfg.get("use_llm", True):
         llm_score, llm_reason = _score_with_gemini(headlines, gemini_key, cfg.get("gemini_model", "gemini-2.5-flash"))
@@ -70,7 +82,7 @@ def fetch_news_sentiment(
                 metrics={"score": llm_score, "method": "gemini_api", "headlines": headlines[:3]},
             )
 
-    # 3. Gemini yoksa OKX ATK coin-sentiment verisini dene
+    # 4. Gemini yoksa OKX ATK coin-sentiment verisini dene
     try:
         sentiment_data = okx.coin_sentiment(coins=coins, period=cfg.get("period", "24h"))
         atk_score, atk_reason = _score_from_atk_sentiment(sentiment_data, cfg.get("weights", {"AVAX": 0.6, "BTC": 0.4}))
@@ -86,7 +98,7 @@ def fetch_news_sentiment(
     except Exception as e:
         log.warning("OKX coin-sentiment okunamadı: %s", e)
 
-    # 4. Canlı veri başarısız -> Güvenli Fallback
+    # 5. Canlı veri başarısız -> Güvenli Fallback
     data = mock_data.get("news", {})
     fallback_score = to_float(data.get("score", 0.0))
     status = Status.PASS if fallback_score >= min_score else Status.FAIL
@@ -97,6 +109,28 @@ def fetch_news_sentiment(
         source=Source.FALLBACK,
         metrics={"score": fallback_score, "method": "fallback_mock", "headlines": headlines or data.get("headlines", [])},
     )
+
+
+def _fetch_tradingview_partner_rss(limit: int = 5) -> list[str]:
+    """TradingView haber akışının ana sağlayıcılarından (Cointelegraph) son başlıkları çeker."""
+    url = "https://cointelegraph.com/rss"
+    try:
+        res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=4)
+        if res.status_code == 200:
+            root = ET.fromstring(res.content)
+            titles = []
+            for item in root.findall(".//item"):
+                title_elem = item.find("title")
+                if title_elem is not None and title_elem.text:
+                    clean = title_elem.text.strip()
+                    if clean:
+                        titles.append(clean)
+                if len(titles) >= limit:
+                    break
+            return titles
+    except Exception as e:
+        log.warning("RSS akışı ayrıştırılamadı: %s", e)
+    return []
 
 
 def _score_from_atk_sentiment(sentiment_details: list[dict[str, Any]], weights: dict[str, float]) -> tuple[float | None, str]:
@@ -152,7 +186,6 @@ def _score_with_gemini(headlines: list[str], api_key: str, model_name: str) -> t
 
         data = res.json()
         raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-        # Temizleme
         if raw_text.startswith("```"):
             raw_text = raw_text.strip("`").replace("json", "").strip()
 
