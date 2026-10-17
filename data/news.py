@@ -165,7 +165,10 @@ def _score_from_atk_sentiment(sentiment_details: list[dict[str, Any]], weights: 
 
 def _score_with_gemini(headlines: list[str], api_key: str, model_name: str) -> tuple[float | None, str]:
     """Google Gemini REST API'sine istek atarak haber başlıklarını puanlar."""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    if "2.5" in model_name:
+        model_name = "gemini-3.8-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
+    headers = {"x-goog-api-key": api_key, "Content-Type": "application/json"}
     prompt = (
         "Sen kıdemli bir kripto piyasa analistisin. Aşağıdaki AVAX ve kripto haber başlıklarını analiz et.\n"
         "AVAX fiyatı açısından genel duyarlılık skorunu -1.0 (aşırı negatif/ayı) ile +1.0 (aşırı pozitif/boğa) arasında belirle.\n"
@@ -177,15 +180,20 @@ def _score_with_gemini(headlines: list[str], api_key: str, model_name: str) -> t
     try:
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0.1, "maxOutputTokens": 100},
+            "generationConfig": {
+                "temperature": 0.1,
+                "maxOutputTokens": 2048,
+                "responseMimeType": "application/json",
+            },
         }
-        res = requests.post(url, json=payload, timeout=8)
+        res = requests.post(url, headers=headers, json=payload, timeout=10)
         if res.status_code != 200:
             log.warning("Gemini API hata döndü (%d): %s", res.status_code, res.text[:200])
             return None, "API hatası"
 
         data = res.json()
-        raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        parts = data["candidates"][0]["content"]["parts"]
+        raw_text = parts[-1]["text"].strip()
         if raw_text.startswith("```"):
             raw_text = raw_text.strip("`").replace("json", "").strip()
 

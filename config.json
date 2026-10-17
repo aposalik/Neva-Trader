@@ -40,7 +40,7 @@
       "headline_limit": 5,
       "min_score": 0.0,
       "use_llm": true,
-      "gemini_model": "gemini-2.5-flash"
+      "gemini_model": "gemini-3.8-flash"
     },
     "macro": {
       "source": "live",
