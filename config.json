@@ -7,7 +7,8 @@
     "max_daily_trades": 4,
     "max_daily_loss_pct": 3.0,
     "max_spread_pct": 0.15,
-    "min_position_usdt": 5.0
+    "min_position_usdt": 5.0,
+    "take_profit_pct": 2.0
   },
   "execution": {
     "is_demo": true,
@@ -35,8 +36,14 @@
     },
     "news": {
       "source": "live",
-      "coins": ["AVAX", "BTC"],
-      "weights": {"AVAX": 0.6, "BTC": 0.4},
+      "coins": [
+        "AVAX",
+        "BTC"
+      ],
+      "weights": {
+        "AVAX": 0.6,
+        "BTC": 0.4
+      },
       "period": "24h",
       "headline_limit": 5,
       "min_score": 0.0,
@@ -45,7 +52,11 @@
     },
     "macro": {
       "source": "live",
-      "regions": ["united_states", "germany", "euro_area"],
+      "regions": [
+        "united_states",
+        "germany",
+        "euro_area"
+      ],
       "importance": 3,
       "blackout_minutes": 30,
       "lookahead_hours": 24
