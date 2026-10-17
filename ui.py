@@ -32,10 +32,11 @@ class DashboardRenderer:
         balance_usdt: float | None,
         pair: str,
         mode_str: str,
+        risk_rules: dict[str, Any] | None = None,
     ) -> None:
         """Bir analiz döngüsünün tüm panelini terminale çizer."""
         if not HAS_RICH or self.console is None:
-            self._render_plain(decision, balance_usdt, pair, mode_str)
+            self._render_plain(decision, balance_usdt, pair, mode_str, risk_rules)
             return
 
         # 1. Başlık Paneli (ASCII-safe semboller)
@@ -46,6 +47,15 @@ class DashboardRenderer:
         title_text.append(f"| Bakiye: {balance_text} ", style="bold green" if balance_usdt is not None else "bold red")
         title_text.append(f"| Mod: {mode_str} ", style="magenta")
         title_text.append(f"| {decision.timestamp}", style="dim")
+
+        if risk_rules:
+            pos_pct = float(risk_rules.get("position_size_pct", 5.0))
+            sl_pct = float(risk_rules.get("stop_loss_pct", 1.0))
+            tp_pct = float(risk_rules.get("take_profit_pct", 2.0))
+            rr = float(risk_rules.get("risk_reward_ratio", round(tp_pct / (sl_pct + 1e-9), 2)))
+            max_t = int(risk_rules.get("max_daily_trades", 4))
+            ks = float(risk_rules.get("max_daily_loss_pct", 3.0))
+            title_text.append(f"\n[Risk Kurallari]: Bakiye: %{pos_pct:.1f} | SL: -%{sl_pct:.1f} | TP: +%{tp_pct:.1f} (1:{rr:.2f} R/R) | Gunluk Max: {max_t} Islem | Kill-Switch: %{ks:.1f}", style="bold cyan")
 
         if decision.scenario:
             title_text.append(f"\n[DEMO SENARYOSU]: {decision.scenario}", style="bold white on blue")
@@ -238,8 +248,8 @@ class DashboardRenderer:
         table.add_column("Giris Fiyati", justify="center", style="bold")
         table.add_column("Miktar (AVAX)", justify="center", style="bold green")
         table.add_column("Pozisyon ($)", justify="center")
-        table.add_column("Stop-Loss (%1.2)", justify="center", style="bold red")
-        table.add_column("Take-Profit (%2.4)", justify="center", style="bold green")
+        table.add_column(f"Stop-Loss (-%{p.stop_loss_pct:.1f})", justify="center", style="bold red")
+        table.add_column(f"Take-Profit (+%{p.take_profit_pct:.1f})", justify="center", style="bold green")
         table.add_column("Maks. Risk ($)", justify="center", style="red")
         table.add_column("Net R/R (Komisyonlu)", justify="center", style="bold cyan")
 
@@ -302,7 +312,7 @@ class DashboardRenderer:
             box=ROUNDED,
         ))
 
-    def _render_plain(self, d: Decision, bal: float | None, pair: str, mode: str) -> None:
+    def _render_plain(self, d: Decision, bal: float, pair: str, mode: str, risk_rules: dict[str, Any] | None = None) -> None:
         """Rich yuklu degilse temiz konsol ciktisi."""
         balance_text = f"${bal:.2f}" if bal is not None else "okunamadı"
         print(f"\n=== NEXA-TRADER | {pair} | Bakiye: {balance_text} | {mode} | {d.timestamp} ===")

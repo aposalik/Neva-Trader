@@ -34,11 +34,14 @@ def calculate_order_plan(
 
     pos_size_pct = to_float(risk_cfg.get("position_size_pct", 5.0))
     sl_pct = to_float(risk_cfg.get("stop_loss_pct", 1.2))
-    rr_ratio = to_float(risk_cfg.get("risk_reward_ratio", 2.0))
     fee_pct = to_float(exec_cfg.get("fee_pct", 0.1))
 
-    # Formül: TP yüzdesi = SL × R/R
-    tp_pct = round(sl_pct * rr_ratio, 3)
+    if "take_profit_pct" in risk_cfg and risk_cfg["take_profit_pct"] is not None:
+        tp_pct = to_float(risk_cfg["take_profit_pct"])
+        rr_ratio = round(tp_pct / (sl_pct + 1e-9), 2) if sl_pct > 0 else 2.0
+    else:
+        rr_ratio = to_float(risk_cfg.get("risk_reward_ratio", 2.0))
+        tp_pct = round(sl_pct * rr_ratio, 3)
 
     # Decimal kullanarak hassas hesaplama (floating point 9.879999999999999 hatasını önler)
     d_bal = Decimal(str(balance_usdt))

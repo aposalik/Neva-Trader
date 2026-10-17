@@ -6,10 +6,15 @@ Kullanım:
   python main.py --simulate-event "US CPI in 8m" # Makro blackout simülasyonu
   python main.py --demo-script            # 3 altın senaryoyu sırayla oynatır (Jüri Demosu)
   python main.py --dry-run                # Emri borsaya iletmeden simüle eder
+
+Kullanıcı Risk ve Kural Belirleme (CMD):
+  python main.py --capital-pct 10.0 --sl-pct 1.5 --tp-pct 3.0
+  python main.py --set-rules              # Terminalden interaktif kural belirleme
 """
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -82,16 +87,106 @@ def parse_cli_args() -> argparse.Namespace:
     parser.add_argument("--simulate-event", type=str, default=None, help="Sanal makro olay enjekte eder (örn: 'US CPI in 8m').")
     parser.add_argument("--dry-run", action="store_true", help="Emirleri borsaya göndermeden simüle eder.")
     parser.add_argument("--live", action="store_true", help="Canlı hesap modu (Varsayılan: --demo simülasyon modu).")
-    parser.add_argument("--review-history", action="store_true", help="Geçmiş kararları analiz edip öneri raporu üretir.")
-    parser.add_argument("--history-days", type=int, default=30, help="Geçmiş analiz dönemi (gün, varsayılan 30).")
+
+    # Kullanıcı Kural & Risk Parametreleri (CMD üzerinden doğrudan giriş)
+    parser.add_argument("--capital-pct", "--position-size-pct", dest="capital_pct", type=float, default=None,
+                        help="İşlem başına kullanılacak bakiye yüzdesi (örn: --capital-pct 5.0).")
+    parser.add_argument("--sl-pct", "--stop-loss-pct", dest="sl_pct", type=float, default=None,
+                        help="Stop-Loss zarar durdur yüzdesi (örn: --sl-pct 1.0).")
+    parser.add_argument("--tp-pct", "--take-profit-pct", dest="tp_pct", type=float, default=None,
+                        help="Take-Profit kâr al yüzdesi (örn: --tp-pct 2.0).")
+    parser.add_argument("--max-daily-loss-pct", "--kill-switch-pct", dest="max_daily_loss_pct", type=float, default=None,
+                        help="Günlük maksimum kümülatif zarar tavanı yüzdesi (örn: --max-daily-loss-pct 3.0).")
+    parser.add_argument("--max-daily-trades", dest="max_daily_trades", type=int, default=None,
+                        help="Günde açılabilecek maksimum işlem adedi (örn: --max-daily-trades 4).")
+    parser.add_argument("--set-rules", "--interactive-rules", action="store_true",
+                        help="Ajan başlamadan önce terminalden interaktif kural ve risk parametrelerini sorar.")
+    parser.add_argument("--save-rules", action="store_true",
+                        help="Girilen kuralları config.json dosyasına kalıcı olarak kaydeder.")
     return parser.parse_args()
 
 
+def prompt_user_rules(current_risk: dict[str, Any]) -> dict[str, Any]:
+    """Terminalden kullanıcıya interaktif olarak risk ve kural parametrelerini sorar."""
+    print("\n" + "=" * 65)
+    print("[*] NEXA-TRADER: KULLANICI RISK VE ISLEM KURAL AYARLARI")
+    print("    [Degeri degistirmeden gecmek icin Enter tusuna basabilirsiniz]")
+    print("=" * 65)
+
+    def _ask_float(prompt_text: str, default_val: float) -> float:
+        val_str = input(f"-> {prompt_text} [Mevcut: %{default_val:.1f}]: ").strip()
+        if not val_str:
+            return default_val
+        try:
+            val = float(val_str)
+            if val <= 0:
+                print(f"    [!] Deger 0'dan buyuk olmali, varsayilan (%{default_val:.1f}) kullaniliyor.")
+                return default_val
+            return val
+        except ValueError:
+            print(f"    [!] Gecersiz sayi, varsayilan (%{default_val:.1f}) kullaniliyor.")
+            return default_val
+
+    def _ask_int(prompt_text: str, default_val: int) -> int:
+        val_str = input(f"-> {prompt_text} [Mevcut: {default_val}]: ").strip()
+        if not val_str:
+            return default_val
+        try:
+            val = int(val_str)
+            if val <= 0:
+                print(f"    [!] Deger 0'dan buyuk olmali, varsayilan ({default_val}) kullaniliyor.")
+                return default_val
+            return val
+        except ValueError:
+            print(f"    [!] Gecersiz tamsayi, varsayilan ({default_val}) kullaniliyor.")
+            return default_val
+
+    cur_pos = float(current_risk.get("position_size_pct", 5.0))
+    cur_sl = float(current_risk.get("stop_loss_pct", 1.0))
+    cur_tp = float(current_risk.get("take_profit_pct", 2.0))
+    cur_max_trades = int(current_risk.get("max_daily_trades", 4))
+    cur_loss = float(current_risk.get("max_daily_loss_pct", 3.0))
+
+    new_pos = _ask_float("Bakiye Kullanim Yuzdesi (%)", cur_pos)
+    new_sl = _ask_float("Stop-Loss (Zarar Durdur) Yuzdesi (%)", cur_sl)
+    new_tp = _ask_float("Take-Profit (Kar Al) Yuzdesi (%)", cur_tp)
+    new_max_trades = _ask_int("Gunluk Maksimum Islem Sayisi", cur_max_trades)
+    new_loss = _ask_float("Gunluk Kill-Switch Zarar Tavani (%)", cur_loss)
+
+    updated = {
+        "position_size_pct": new_pos,
+        "stop_loss_pct": new_sl,
+        "take_profit_pct": new_tp,
+        "risk_reward_ratio": round(new_tp / (new_sl + 1e-9), 2),
+        "max_daily_trades": new_max_trades,
+        "max_daily_loss_pct": new_loss,
+    }
+
+    print("-" * 65)
+    print(f"[OK] Kural Motoru Guncellendi: Bakiye: %{new_pos:.1f} | SL: -%{new_sl:.1f} | TP: +%{new_tp:.1f} (1:{updated['risk_reward_ratio']:.2f} R/R)")
+    print(f"     Gunluk Max Islem: {new_max_trades} | Kill-Switch: %{new_loss:.1f}")
+    print("=" * 65 + "\n")
+    return updated
+
+
 class NexaTraderEngine:
-    def __init__(self, is_demo: bool = True, dry_run: bool = False) -> None:
+    def __init__(
+        self,
+        is_demo: bool = True,
+        dry_run: bool = False,
+        config_overrides: dict[str, Any] | None = None,
+    ) -> None:
         self.is_demo = is_demo
         self.dry_run = dry_run
         self.config = load_json(CONFIG_PATH)
+
+        if config_overrides:
+            for k, v in config_overrides.items():
+                if isinstance(v, dict) and k in self.config and isinstance(self.config[k], dict):
+                    self.config[k].update(v)
+                else:
+                    self.config[k] = v
+
         self.mock_data = load_json(MOCK_DATA_PATH)
         self.inst_id = self.config.get("instrument", "AVAX-USDT")
 
@@ -286,8 +381,14 @@ class NexaTraderEngine:
             export_decisions(AUDIT_LOG_PATH, REPORTS_DIR)
         except Exception:
             pass
-        mode_str = "CANLI MOD (DİKKAT!)" if not self.is_demo else ("DRY-RUN (SİMÜLE)" if self.dry_run else "DEMO MODU")
-        self.ui.render_cycle(decision, usdt_bal, self.inst_id, mode_str)
+        mode_str = "CANLI MOD (DIKKAT!)" if not self.is_demo else ("DRY-RUN (SIMULE)" if self.dry_run else "DEMO MODU")
+        self.ui.render_cycle(
+            decision,
+            usdt_bal,
+            self.inst_id,
+            mode_str,
+            risk_rules=self.config.get("risk", {}),
+        )
 
         return decision
 
@@ -328,15 +429,52 @@ def main() -> None:
     load_dotenv()
     args = parse_cli_args()
 
-    if args.review_history:
-        if not refresh_history_review(days=args.history_days, display=True):
-            sys.exit(1)
-        return
+    # Demo Script ile Canlı Hesap Çakışma Koruması
+    if args.demo_script and args.live:
+        print("\n[HATA] --demo-script ve --dry-run modlari gercek fon riski olusmamasi icin")
+        print("       --live (Canli Borsa) bayragiyla birlikte CALISTIRILAMAZ!")
+        print("       Lutfen guvenli test icin sadece 'python main.py --demo-script' calistirin.\n")
+        sys.exit(1)
 
     is_demo = not args.live
     dry_run = args.dry_run
 
-    engine = NexaTraderEngine(is_demo=is_demo, dry_run=dry_run)
+    base_config = load_json(CONFIG_PATH)
+    risk_overrides: dict[str, Any] = {}
+
+    # 1. İnteraktif Kural Belirleme (--set-rules)
+    if args.set_rules:
+        risk_overrides = prompt_user_rules(base_config.get("risk", {}))
+
+    # 2. Doğrudan CLI Bayrakları
+    if args.capital_pct is not None:
+        risk_overrides["position_size_pct"] = float(args.capital_pct)
+    if args.sl_pct is not None:
+        risk_overrides["stop_loss_pct"] = float(args.sl_pct)
+    if args.tp_pct is not None:
+        risk_overrides["take_profit_pct"] = float(args.tp_pct)
+        sl = risk_overrides.get("stop_loss_pct", base_config.get("risk", {}).get("stop_loss_pct", 1.0))
+        risk_overrides["risk_reward_ratio"] = round(float(args.tp_pct) / (float(sl) + 1e-9), 2)
+    if args.max_daily_loss_pct is not None:
+        risk_overrides["max_daily_loss_pct"] = float(args.max_daily_loss_pct)
+    if args.max_daily_trades is not None:
+        risk_overrides["max_daily_trades"] = int(args.max_daily_trades)
+
+    config_overrides = {"risk": risk_overrides} if risk_overrides else None
+
+    # Kalıcı Kaydetme (--save-rules)
+    if args.save_rules and risk_overrides:
+        base_config.setdefault("risk", {}).update(risk_overrides)
+        CONFIG_PATH.write_text(json.dumps(base_config, indent=2), encoding="utf-8")
+        print("[*] Girilen risk kurallari config.json dosyasina kalici olarak kaydedildi.\n")
+
+    engine = NexaTraderEngine(is_demo=is_demo, dry_run=dry_run, config_overrides=config_overrides)
+
+    if risk_overrides and not args.set_rules:
+        r = engine.config.get("risk", {})
+        sl_val = r.get("stop_loss_pct", 1.0)
+        tp_val = r.get("take_profit_pct", sl_val * r.get("risk_reward_ratio", 2.0))
+        print(f"[*] Ozel Kullanici Kurallari Devrede: Bakiye: %{r.get('position_size_pct')}% | SL: -%{sl_val}% | TP: +%{tp_val}% (1:{r.get('risk_reward_ratio', 2.0):.2f} R/R)\n")
 
     if args.demo_script:
         engine.run_demo_script()

@@ -128,7 +128,39 @@ python main.py --review-history --history-days 7
 
 TradingView takvim verilerini yenilemek için proje klasöründe `python takvim_cek.py` çalıştırın. Toplayıcı bugünden itibaren 7 günlük dönemdeki yüksek etkili ABD/Almanya/Euro Bölgesi olaylarını `takvim_verileri.json` dosyasına kaydeder; ajan her analiz döngüsünde bu dosyayı blackout kontrolüne dahil eder.
 
-### 3.3 Testleri Çalıştırma
+### 3.3 Kullanıcı Kural Motoru ve Risk Belirleme (CMD Üzerinden Özelleştirme)
+Ajanın işlem başına bakiyenin yüzde kaçını kullanacağı (`--capital-pct`), Stop-Loss (`--sl-pct`) ve Take-Profit (`--tp-pct`) oranları kullanıcı tarafından komut satırından dinamik olarak belirlenebilir:
+
+#### A. Komut Satırından Doğrudan Parametre ile Çalıştırma
+```bash
+# Örnek 1: Bakiyenin %10'u ile pozisyon aç, %1.5 SL / %3.0 TP uygula
+python main.py --capital-pct 10.0 --sl-pct 1.5 --tp-pct 3.0
+
+# Örnek 2: 30 saniyelik otonom döngüde özel risk kuralları ile çalıştır
+python main.py --loop 30 --capital-pct 7.5 --sl-pct 1.2 --tp-pct 2.4
+
+# Örnek 3: Günlük zarar tavanını (Kill-Switch) ve işlem limitini de belirle
+python main.py --capital-pct 5.0 --sl-pct 1.0 --tp-pct 2.0 --max-daily-trades 3 --max-daily-loss-pct 2.5
+```
+
+#### B. Terminalden İnteraktif Kural Belirleme (`--set-rules`)
+Ajan başlamadan önce terminal üzerinden adım adım parametreleri girmenizi sağlar (Enter'a basarak mevcut varsayılan değerleri kabul edebilirsiniz):
+```bash
+python main.py --set-rules
+
+# Döngü moduyla interaktif kural belirleme:
+python main.py --loop 30 --set-rules
+```
+*Terminal Soru Akışı:*
+- `-> Bakiye Kullanım Yüzdesi (%) [Mevcut: %5.0]:`
+- `-> Stop-Loss (Zarar Durdur) Yüzdesi (%) [Mevcut: %1.0]:`
+- `-> Take-Profit (Kâr Al) Yüzdesi (%) [Mevcut: %2.0]:`
+- `-> Günlük Maksimum İşlem Sayısı [Mevcut: 4]:`
+- `-> Günlük Kill-Switch Zarar Tavanı (%) [Mevcut: %3.0]:`
+
+*(İsteğe bağlı: Belirlediğiniz kuralları `config.json` dosyasına kalıcı olarak işlemek için komutun sonuna `--save-rules` bayrağını ekleyebilirsiniz.)*
+
+### 3.4 Testleri Çalıştırma
 ```bash
 pytest -v
 ```
