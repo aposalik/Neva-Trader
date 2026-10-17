@@ -91,14 +91,31 @@ class AvalancheNotary:
         return 0
 
     def _broadcast_notary_tx(self, decision_hash: str, action: str, inst_id: str) -> dict[str, Any]:
-        """Testnet cüzdanı ile kararı Avalanche Fuji'ye mühürleyen tx gönderir."""
-        # Noter calldata verisi: 0xNOTARY + decisionHash
+        """Testnet cuzdani ile karari Avalanche Fqji Testnet'e gercek web3 tx olarak muhurler."""
         try:
-            # Minimal eth raw transaction veya doğrudan RPC ile veri damgalama
-            return {
-                "success": True,
-                "tx_hash": f"0x{hashlib.sha256((decision_hash + str(time.time())).encode()).hexdigest()}",
+            from web3 import Web3
+            w3 = Web3(Web3.HTTPProvider(self.rpc_url))
+            if not w3.is_connected():
+                return {"success": False, "error": "RPC baglantisi saglanamadi"}
+            acct = w3.eth.account.from_key(self.private_key)
+            nonce = w3.eth.get_transaction_count(acct.address)
+            gas_price = w3.eth.gas_price
+            calldata = decision_hash if decision_hash.startswith("0x") else f"0x{decision_hash}"
+            tx = {
+                "nonce": nonce,
+                "to": acct.address,
+                "value": 0,
+                "gas": 35000,
+                "gasPrice": gas_price,
+                "data": calldata,
+                "chainId": FUJI_CHAIN_ID,
             }
+            signed = acct.sign_transaction(tx)
+            tx_hash_bytes = w3.eth.send_raw_transaction(signed.raw_transaction)
+            tx_hex = tx_hash_bytes.hex()
+            tx_hash_str = tx_hex if tx_hex.startswith("0x") else f"0x{tx_hex}"
+            log.info("Avalanche Fuji Noter Gercek Tx Gonderildi: %s", tx_hash_str)
+            return {"success": True, "tx_hash": tx_hash_str}
         except Exception as e:
-            log.warning("Fuji Noter yayını başarısız: %s", e)
+            log.warning("Fuji Noter yayini basarisiz: %s", e)
             return {"success": False, "error": str(e)}
