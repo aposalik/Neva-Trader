@@ -146,3 +146,45 @@ class OrderExecutor:
         except Exception as e:
             log.warning("Emir detayları okunamadı: %s", e)
             return {"state": "SUBMITTED_CONFIRMED"}
+
+
+class OKXExecutor:
+    """Demo-only compatibility wrapper for the standalone test_flow script."""
+
+    def __init__(self, is_demo: bool = True) -> None:
+        if not is_demo:
+            raise ValueError("OKXExecutor yalnızca demo modunda kullanılabilir.")
+        self.okx = OKXClient(demo=True)
+
+    def place_spot_buy(
+        self,
+        inst_id: str,
+        size: float,
+        tp_trigger: float,
+        sl_trigger: float,
+    ) -> dict[str, Any]:
+        """Place a demo buy where size is the quote-currency amount in USDT."""
+        ticker = self.okx.ticker(inst_id)
+        entry_price = ticker["last"]
+        if size <= 0 or entry_price <= 0 or not sl_trigger < entry_price < tp_trigger:
+            raise ValueError("Emir miktarı veya TP/SL fiyatları geçersiz.")
+
+        base_size = size / entry_price
+        risk_per_unit = entry_price - sl_trigger
+        reward_per_unit = tp_trigger - entry_price
+        plan = OrderPlan(
+            inst_id=inst_id,
+            side="buy",
+            size=base_size,
+            entry_price=entry_price,
+            sl_price=sl_trigger,
+            tp_price=tp_trigger,
+            stop_loss_pct=risk_per_unit / entry_price * 100,
+            take_profit_pct=reward_per_unit / entry_price * 100,
+            risk_reward_ratio=reward_per_unit / risk_per_unit,
+            notional_usdt=size,
+            risk_usdt=base_size * risk_per_unit,
+            risk_pct_of_balance=0.0,
+            net_rr_after_fees=reward_per_unit / risk_per_unit,
+        )
+        return OrderExecutor(self.okx, {"instrument": inst_id}).execute_plan(plan)

@@ -10,6 +10,7 @@
     "min_position_usdt": 5.0
   },
   "execution": {
+    "is_demo": true,
     "fee_pct": 0.1,
     "fill_check_retries": 3,
     "protection_check_retries": 3,
