@@ -2,7 +2,7 @@
   "instrument": "AVAX-USDT",
   "risk": {
     "position_size_pct": 5.0,
-    "stop_loss_pct": 1.2,
+    "stop_loss_pct": 1.0,
     "risk_reward_ratio": 2.0,
     "max_daily_trades": 4,
     "max_daily_loss_pct": 3.0,
@@ -28,7 +28,7 @@
   },
   "pillars": {
     "onchain": {
-      "source": "mock",
+      "source": "live",
       "mvrv_healthy_max": 2.5,
       "mvrv_top": 3.7
     },
