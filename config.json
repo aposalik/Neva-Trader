@@ -67,5 +67,10 @@
     "max_retries": 3
   },
   "loop_min_interval_sec": 15,
-  "demo_script_pause_sec": 6
+  "demo_script_pause_sec": 6,
+  "notary": {
+    "contract_address": "0x65d15cec2F1C9a034A95C3d41EEF408142a45472",
+    "chain_id": 43113,
+    "network": "Avalanche Fuji Testnet"
+  }
 }
