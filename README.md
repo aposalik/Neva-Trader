@@ -5,38 +5,57 @@ OKX Agent Trade Kit (`@okx_ai/okx-trade-cli` v1.4.8+, `--demo` modu) üzerinde `
 
 ---
 
-## 1. Mimari: 4 Sinyal Ayağı + 1 Koruma Katmanı
+## 1. Sistem Mimarisi (Architecture)
+
+Nexa-Trader (Sentinel), BlackRock ve Team1 Türkiye'nin *Güvenilir Agent* standartlarına (Kimlik, Araçlar, Sınırlar, İzlenebilirlik) tam uyumlu, 4 katmanlı bir boru hattı mimarisiyle çalışır:
 
 ```
-                              +---------------------------------------+
-                              |         SENTINEL DECISION ENGINE      |
-                              +-------------------+-------------------+
++--------------------------------------------------------------------------------------------------+
+|                            1. VERI TOPLAMA VE ENTEGRASYON KATMANI                                |
+|  - OKX ATK CLI (v1.4.8)    : 1H & 15m Mumlar, Ticker, Cüzdan Bakiyesi, Spot & Attached TP/SL     |
+|  - Avalanche C-Chain RPC   : Anlık Blok Yüksekliği, nAVAX Gaz Maliyeti, Canlı Ağ Durumu          |
+|  - Cointelegraph/TV RSS    : Canlı Haber Akışı, Google Gemini 3.8 Flash Kurumsal NLP Analizi     |
+|  - Ekonomik Takvim         : OKX Calendar + takvim_verileri.json (TradingView) + events.json      |
++-------------------------------------------------+------------------------------------------------+
                                                   |
-         +--------------------+-------------------+-------------------+--------------------+
-         | (1. Ayak)          | (2. Ayak)         | (3. Ayak)         | (4. Ayak)          |
-         v                    v                   v                   v                    v
-+------------------+ +------------------+ +------------------+ +------------------+ +------------------+
-|   OKX ATK API    | |   CryptoQuant    | |   Haber Analizi  | | OKX + TradingView | | DETERMINİSTİK  |
-|  1H Trend (EMA)  | | On-Chain Verisi  | | Google Gemini    | | Ekonomik Takvim  | | RISK GUARDRAIL   |
-| 15m Price Action | | Borsa Rezervi    | | Duyarlılık (-1..)| | 3 Yıldızlı Haber | | (Executor Öncesi |
-| (Hacim + Mumlar) | | (MVRV, Balina)   | | (AVAX / BTC)     | | (±30 dk Blackout)| |   Zorunlu Kapı)  |
-+------------------+ +------------------+ +------------------+ +------------------+ +------------------+
-```
+                                                  v
++--------------------------------------------------------------------------------------------------+
+|                            2. 4 AYAKLI SINYAL VE STRATEJI MOTORU                                 |
+|  [Teknik Analiz]    : 1H Trend (EMA20 > EMA50, Kapanış > EMA20, Hacim) + 15m Pullback Onayı      |
+|  [On-Chain Sağlık]  : C-Chain Blok/Gaz Akışı, Rezerv Azalışı (<0), MVRV (1.0-2.5), Balina Trendi  |
+|  [Haber & NLP]      : Gemini 3.8 Flash Wall Street Duyarlılık Skoru (>0.0, negatifse VETO)       |
+|  [Makro Blackout]   : ABD / Almanya / EUR 3 Yıldızlı Olaylardan ±30 dk Önce/Sonra İşlem Yasağı   |
++-------------------------------------------------+------------------------------------------------+
+                                                  |
+                                                  | [Kural: UNANIMOUS (4 Ayak da PASS Olmalı)]
+                                                  v
++--------------------------------------------------------------------------------------------------+
+|                            3. DETERMINİSTİK RISK VE GUARDRAIL KATMANI                            |
+|  - Sermaye Boyutu   : Cüzdan bakiyesinin sabit maksimum %5.0'i ile pozisyon açılışı            |
+|  - Risk/Kazanç (R/R): %1.0 Stop-Loss (Zarar Durdur) / %2.0 Take-Profit (Kâr Al) [1:2 Oran]       |
+|  - İşlem Limitleri  : Günde maksimum 4 işlem, aynı anda tek aktif pozisyon kuralı                |
+|  - Acil Kilitleme   : Günlük toplam zarar %3.0'e ulaştığında sistemi 24 saat donduran Kill-Switch|
+|  - Likidite Koruma  : Alış-satış makası (Spread) %0.15'i aşarsa piyasa alımını engelleme        |
++-------------------------------------------------+------------------------------------------------+
+                                                  |
+                                                  | [Guardrail Onayı Verildi]
+                                                  v
++--------------------------------------------------------------------------------------------------+
+|                            4. BORSA VE BLOKZİNCİRİ YÜRÜTME (EXECUTION)                           |
+|  - OKX TR Demo Motoru   : okx spot place --instId AVAX-USDT --tdMode cash --side buy             |
+|  - Atomik Attached TP/SL: --tpTriggerPx ve --slTriggerPx borsa motorunda milisaniyede kilitlenir  |
+|  - Avalanche Fuji Noter : `AgentNotary.sol` (Chain ID 43113) ile karar hash'i zincire mühürlenir  |
+|                           (Snowtrace Explorer üzerinden doğrulanabilir audit trail)              |
++--------------------------------------------------------------------------------------------------+
+`
 
-1. **1. Ayak — Teknik Analiz (OKX ATK):**
-   - 1H Grafikte `EMA 20 > EMA 50`, `Fiyat > EMA 20` ve hacim teyidi (`vol > 5h_avg`).
-   - 15m Grafikte geri çekilme (pullback) sonrası dönüş mumları: **Bullish Engulfing**, **Hammer** veya **Morning Star**.
-2. **2. Ayak — On-Chain Sağlık (CryptoQuant):**
-   - Borsa rezervlerinde azalış (`exchange_reserve < 0`), sağlıklı MVRV oranı (`1.0 - 2.5`), artan balina birikimi.
-3. **3. Ayak — Haber Akışı & Duyarlılık:**
-   - AVAX ve BTC haber başlıklarının Google Gemini API ile duyarlılık analizi (-1.0 .. +1.0). Skor < 0 ise alım veto edilir.
-4. **4. Ayak — Makro Takvim & Blackout (OKX + TradingView):**
-   - OKX ekonomik takvimine ek olarak `takvim_verileri.json` içindeki TradingView verileri ve `events.json` manuel olayları kontrol edilir. ABD, Almanya ve Euro Bölgesi kritik verilerinden **±30 dakika** önce/sonra yeni işlem açılması kilitlenir.
-5. **+1 Koruma Katmanı — Deterministik Risk Guardrail:**
-   - Her işlemde portföyün sabit **%5.0**'i riske edilir.
-   - **1:2 R/R Oranı:** Stop-Loss %1.2, Take-Profit %2.4.
-   - **Atomik Attached TP/SL:** OKX borsasına tek komutta (`--tpTriggerPx` ve `--slTriggerPx`) iletilir; pozisyon açıldığı mikrosaniyede korumaya alınır.
-   - Kill-Switch: Günlük zarar %3'ü aşarsa sistem kendini kilitler.
+### Proje Modüler Yapısı
+- `data/` : OKX CLI, Avalanche C-Chain RPC, TradingView RSS ve ekonomik takvim veri köprüleri.
+- `strategy/` : 4 ayağı tek potada eriten karar motoru (`signal_engine.py`) ve teknik hesaplamalar (`indicators.py`).
+- `risk/` : Sermaye koruması, bakiye hesaplama ve guardrail güvenlik kilitleri (`guardrail.py`).
+- `execution/` : OKX borsa emir yürütücüsü (`executor.py`) ve Avalanche Fuji Web3 noter mühürleyicisi (`notary.py`).
+- `contracts/` : Avalanche üzerinde çalışan `AgentNotary.sol` akıllı sözleşmesi.
+- `reports/` : Her analiz döngüsünde otomatik güncellenen HTML Dashboard, CSV ve Markdown denetim kayıtları.
 
 ---
 
@@ -117,14 +136,3 @@ pytest -v
 - **Tek Yönlü İşlem (Spot):** İlk MVP'de marjin tasfiye riskinden kaçınmak için sadece Spot alım yapılır; düşüş trendinde nakitte kalınır.
 
 ---
-
-## 5. Juri 5 Temel Soru - Cevap Matrisi
-
-| Soru | Nexa-Trader (Sentinel) Cozumu |
-| :--- | :--- |
-| **1. Agent canli calisiyor mu?** | Evet. @okx_ai/okx-trade-cli v1.4.8+ ile canli OKX TR Demo borsa motoruna ve resmi Avalanche C-Chain RPC endpoint\'ine baglidir. |
-| **2. Hangi yetkilere ve limitlere sahip?** | Sermayenin maksimum %5\'i, gunluk en fazla 4 islem, %3 gunluk kayip limiti (Kill-Switch), 1:2 R/R orani (%1.0 SL / %2.0 TP). |
-| **3. Gecmis islemler dogrulanabiliyor mu?** | Evet. Her karar ve TP/SL seviyesi SHA-256 ozetiyle Avalanche Fuji Testnet\'teki AgentNotary akilli sozlesmesine muhurlenir. |
-| **4. Beklenmedik girdide ne yapar?** | Guardrail korumasi devreye girer; supheli veya kural disi durumlarda sermayeyi korumak adina varsayilan olarak nakitte kalir ([NO TRADE]). |
-| **5. Cozdugu problem ve hedef kitle nedir?** | Gunluk alim-satim yapan yatirimcilarin duygusal ve kontrolsuz islemlerini onleyerek matematiksel, risk kontrollu ve blokzinciri uzerinde denetlenebilir bir otonom disiplin saglar. |
-
