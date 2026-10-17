@@ -44,7 +44,7 @@ class NeverExecute:
 
 
 class CaptureUI:
-    def render_cycle(self, decision, balance_usdt, pair, mode_str):
+    def render_cycle(self, decision, balance_usdt, pair, mode_str, risk_rules=None):
         self.balance_usdt = balance_usdt
 
 
