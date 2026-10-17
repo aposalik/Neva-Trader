@@ -16,7 +16,7 @@ OKX Agent Trade Kit (`@okx_ai/okx-trade-cli` v1.4.8+, `--demo` modu) üzerinde `
          | (1. Ayak)          | (2. Ayak)         | (3. Ayak)         | (4. Ayak)          |
          v                    v                   v                   v                    v
 +------------------+ +------------------+ +------------------+ +------------------+ +------------------+
-|   OKX ATK API    | |   CryptoQuant    | |   Haber Analizi  | |  Investing.com   | | DETERMINİSTİK    |
+|   OKX ATK API    | |   CryptoQuant    | |   Haber Analizi  | | OKX + TradingView | | DETERMINİSTİK  |
 |  1H Trend (EMA)  | | On-Chain Verisi  | | Google Gemini    | | Ekonomik Takvim  | | RISK GUARDRAIL   |
 | 15m Price Action | | Borsa Rezervi    | | Duyarlılık (-1..)| | 3 Yıldızlı Haber | | (Executor Öncesi |
 | (Hacim + Mumlar) | | (MVRV, Balina)   | | (AVAX / BTC)     | | (±30 dk Blackout)| |   Zorunlu Kapı)  |
@@ -30,8 +30,8 @@ OKX Agent Trade Kit (`@okx_ai/okx-trade-cli` v1.4.8+, `--demo` modu) üzerinde `
    - Borsa rezervlerinde azalış (`exchange_reserve < 0`), sağlıklı MVRV oranı (`1.0 - 2.5`), artan balina birikimi.
 3. **3. Ayak — Haber Akışı & Duyarlılık:**
    - AVAX ve BTC haber başlıklarının Google Gemini API ile duyarlılık analizi (-1.0 .. +1.0). Skor < 0 ise alım veto edilir.
-4. **4. Ayak — Makro Takvim & Blackout (Investing.com):**
-   - ABD, Almanya ve Euro Bölgesi 3 yıldızlı kritik ekonomik verilerden **±30 dakika** önce/sonra yeni işlem açılması kilitlenir.
+4. **4. Ayak — Makro Takvim & Blackout (OKX + TradingView):**
+   - OKX ekonomik takvimine ek olarak `takvim_verileri.json` içindeki TradingView verileri ve `events.json` manuel olayları kontrol edilir. ABD, Almanya ve Euro Bölgesi kritik verilerinden **±30 dakika** önce/sonra yeni işlem açılması kilitlenir.
 5. **+1 Koruma Katmanı — Deterministik Risk Guardrail:**
    - Her işlemde portföyün sabit **%5.0**'i riske edilir.
    - **1:2 R/R Oranı:** Stop-Loss %1.2, Take-Profit %2.4.
@@ -85,6 +85,8 @@ python main.py --simulate-event "US CPI in 8m"
 # Borsaya gerçek emir iletmeden simülasyon (Dry-Run)
 python main.py --dry-run
 ```
+
+TradingView takvim verilerini yenilemek için proje klasöründe `python takvim_cek.py` çalıştırın. Toplayıcı bugünden itibaren 7 günlük dönemdeki yüksek etkili ABD/Almanya/Euro Bölgesi olaylarını `takvim_verileri.json` dosyasına kaydeder; ajan her analiz döngüsünde bu dosyayı blackout kontrolüne dahil eder.
 
 ### 3.3 Testleri Çalıştırma
 ```bash

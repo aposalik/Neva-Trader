@@ -1,7 +1,7 @@
 """Makroekonomik Takvim ve Blackout Kontrolcüsü (4. Ayak).
 
-1. OKX ATK yerleşik economic-calendar API'sini (3 yıldızlı ABD/Almanya/Euro Bölgesi) sorgular.
-2. events.json dosyasından elle eklenmiş etkinlikleri okur.
+1. OKX ATK economic-calendar API'sini sorgular.
+2. TradingView'dan alınan takvim_verileri.json ve events.json dosyalarını okur.
 3. --simulate-event "US CPI in 10m" bayrağı verilmişse sanal olay enjekte eder.
 4. Olay zamanından ±blackout_minutes (varsayılan ±30 dk) içindeyse işlem kilitlenir (FAIL).
 """
@@ -27,6 +27,7 @@ def fetch_macro_status(
     events_path: Path | None = None,
     simulate_event_str: str | None = None,
     force_mock: bool = False,
+    calendar_path: Path | None = None,
 ) -> PillarResult:
     """Makro takvim ve blackout durumunu denetler (4. Ayak)."""
     cfg = config.get("pillars", {}).get("macro", {})
@@ -86,7 +87,7 @@ def fetch_macro_status(
         live_events = mock_data.get("macro", {}).get("events", [])
 
     # Tüm olayları birleştir ve zamanlarına göre blackout denetimi yap
-    all_events = _normalize_events(live_events, manual_events)
+    all_events = _normalize_events(live_events, manual_events, calendar_events)
     active_blackout_event = None
     min_diff_sec = float("inf")
     closest_event_name = ""
@@ -156,7 +157,11 @@ def _handle_simulated_event(sim_str: str, now: datetime, blackout_min: int) -> P
     )
 
 
-def _normalize_events(live_list: list[dict[str, Any]], manual_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _normalize_events(
+    live_list: list[dict[str, Any]],
+    manual_list: list[dict[str, Any]],
+    calendar_list: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     """Tüm etkinlikleri tek bir UTC zaman damgalı listeye dönüştürür."""
     out: list[dict[str, Any]] = []
 
@@ -184,9 +189,24 @@ def _normalize_events(live_list: list[dict[str, Any]], manual_list: list[dict[st
                 out.append({
                     "event": item.get("event", "Manuel Olay"),
                     "region": item.get("region", "Custom"),
-                    "time_utc": ev_time,
+                    "time_utc": _as_utc(ev_time),
                 })
-            except Exception:
+            except (TypeError, ValueError):
+                log.warning("Manuel takvim etkinliğinin zamanı çözümlenemedi: %s", item)
+                continue
+
+    for item in calendar_list or []:
+        iso_str = item.get("tarih_utc")
+        if iso_str:
+            try:
+                ev_time = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+                out.append({
+                    "event": item.get("baslik") or "TradingView Etkinliği",
+                    "region": item.get("ulke") or "Global",
+                    "time_utc": _as_utc(ev_time),
+                })
+            except (AttributeError, TypeError, ValueError):
+                log.warning("TradingView takvim etkinliğinin zamanı çözümlenemedi: %s", item)
                 continue
 
     return out
