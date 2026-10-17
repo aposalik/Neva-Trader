@@ -40,23 +40,38 @@ OKX Agent Trade Kit (`@okx_ai/okx-trade-cli` v1.4.8+, `--demo` modu) üzerinde `
 
 ---
 
-## 2. Hızlı Kurulum
+## 2. Juri Icin Adim Adim Hizli Calistirma Rehberi (Quick Start)
 
-### 2.1 Bağımlılıklar
-Node.js (v18+) ve Python 3.10+ gereklidir:
+Juri uyelerinin projeyi kendi bilgisayarlarinda 2 dakika icinde ayaga kaldirabilmesi icin gereken adimlar:
 
+### Adim 1: Depoyu Klonlayin ve Feat Dalina Gecin
 ```bash
-# 1. OKX CLI Kurulumu ve Demo Girişi
-npm install -g @okx_ai/okx-trade-cli
-okx auth login   # Tarayıcıda doğrulama koduyla tek tıkla bağlanın
-
-# 2. Python Kütüphanelerini Yükleyin
-pip install -r requirements.txt
-
-# 3. Ortam Değişkenleri (Opsiyonel Gemini API)
-cp .env.example .env
-# .env dosyasına GEMINI_API_KEY değerinizi ekleyin (yoksa ATK yerleşik duyarlılık kullanılır)
+git clone https://github.com/aposalik/Neva-Trader.git
+cd Neva-Trader
+git checkout feat/cchain-rpc-rules-and-mvp-plan
 ```
+
+### Adim 2: Bagimliliklari Yukleyin
+```bash
+pip install -r requirements.txt
+npm install -g @okx_ai/okx-trade-cli
+```
+
+### Adim 3: OKX Demo Girisi Yapin (Tarayicidan Tek Tikla)
+```bash
+okx auth login
+```
+*(API anahtari olusturmaniza gerek yoktur; CLI tarayicida OKX TR demo onayini otomatik baglar.)*
+
+### Adim 4: Ortam Sablonunu Kopyalayin
+```bash
+# Windows PowerShell:
+Copy-Item .env.example .env
+
+# Mac / Linux:
+cp .env.example .env
+```
+*(Not: Sistem, dis anahtar girilmese dahi OKX yerlesik duyarlilik analizi ve Avalanche RPC ile %100 canli calisir.)*
 
 ---
 
@@ -100,3 +115,16 @@ pytest -v
 - **Doğrulanmış Canlı Bileşenler:** OKX CLI üzerinden bakiye sorgulama, mum verisi (1H, 15m), ticker, spot alım ve attached TP/SL emirleri gerçek OKX demo motorunda canlı test edilmiş ve doğrulanmıştır.
 - **Fallback Protokolü:** CryptoQuant veya dış haber scraping servisleri kotaya takıldığında sistem sessizce sahte veri üretmez; `mock_data.json` verisine geçer ve terminalde açıkça `[FALLBACK: MOCK DATA]` etiketini gösterir.
 - **Tek Yönlü İşlem (Spot):** İlk MVP'de marjin tasfiye riskinden kaçınmak için sadece Spot alım yapılır; düşüş trendinde nakitte kalınır.
+
+---
+
+## 5. Juri 5 Temel Soru - Cevap Matrisi
+
+| Soru | Nexa-Trader (Sentinel) Cozumu |
+| :--- | :--- |
+| **1. Agent canli calisiyor mu?** | Evet. @okx_ai/okx-trade-cli v1.4.8+ ile canli OKX TR Demo borsa motoruna ve resmi Avalanche C-Chain RPC endpoint\'ine baglidir. |
+| **2. Hangi yetkilere ve limitlere sahip?** | Sermayenin maksimum %5\'i, gunluk en fazla 4 islem, %3 gunluk kayip limiti (Kill-Switch), 1:2 R/R orani (%1.0 SL / %2.0 TP). |
+| **3. Gecmis islemler dogrulanabiliyor mu?** | Evet. Her karar ve TP/SL seviyesi SHA-256 ozetiyle Avalanche Fuji Testnet\'teki AgentNotary akilli sozlesmesine muhurlenir. |
+| **4. Beklenmedik girdide ne yapar?** | Guardrail korumasi devreye girer; supheli veya kural disi durumlarda sermayeyi korumak adina varsayilan olarak nakitte kalir ([NO TRADE]). |
+| **5. Cozdugu problem ve hedef kitle nedir?** | Gunluk alim-satim yapan yatirimcilarin duygusal ve kontrolsuz islemlerini onleyerek matematiksel, risk kontrollu ve blokzinciri uzerinde denetlenebilir bir otonom disiplin saglar. |
+
