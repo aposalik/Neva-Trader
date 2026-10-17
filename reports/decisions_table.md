@@ -1,6 +1,6 @@
 # NEXA-TRADER (SENTINEL) — KARAR VE İŞLEM GEÇMİŞİ
 
-> **Toplam Kayıt Sayısı:** 160  
+> **Toplam Kayıt Sayısı:** 163  
 > **Kaynak Dosya:** `decisions.log`  
 
 | Zaman (TRT) | Senaryo / Mod | Fiyat (USDT) | Karar | 1.Teknik | 2.OnChain | 3.Haber | 4.Makro | Veto Gerekçesi / Emir Özeti |
@@ -165,3 +165,6 @@
 | 17.10.2026 17:29 TRT | Canlı Tarama | 9.873 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=9.987, EMA50=10.008, Kapanış=9.854) |
 | 17.10.2026 17:30 TRT | Canlı Tarama | 9.873 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=9.987, EMA50=10.008, Kapanış=9.854) |
 | 17.10.2026 17:30 TRT | Canlı Tarama | 9.879 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=9.987, EMA50=10.008, Kapanış=9.854) |
+| 17.10.2026 17:31 TRT | Canlı Tarama | 9.879 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=9.987, EMA50=10.008, Kapanış=9.854) |
+| 17.10.2026 17:31 TRT | Canlı Tarama | 9.879 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=9.987, EMA50=10.008, Kapanış=9.854) |
+| 17.10.2026 17:32 TRT | Canlı Tarama | 9.879 | NO_TRADE | FAIL | PASS | PASS (+0.41) | PASS | Ajan sermayeyi korumak adina beklemede kaldi: Teknik trend zayif veya 15m donus mumu eksik. | 1H Trend AŞAĞI/ZAYIF (EMA20=9.987, EMA50=10.008, Kapanış=9.854) |
