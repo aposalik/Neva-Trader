@@ -1,0 +1,10 @@
+{
+  "market": {"price": 28.0, "balance_usdt": 5000.0, "spread_pct": 0.08},
+  "onchain": {"signal": "accumulation", "score": 0.7, "source": "mock-onchain"},
+  "news": {"sentiment": 0.72, "summary": "Positive AVAX ecosystem flow", "source": "mock-news"},
+  "candles": [
+    {"ts": "2026-10-17T06:00:00+00:00", "open": 27.1, "high": 27.4, "low": 27.0, "close": 27.3, "volume": 1100},
+    {"ts": "2026-10-17T07:00:00+00:00", "open": 27.3, "high": 27.8, "low": 27.2, "close": 27.7, "volume": 1450},
+    {"ts": "2026-10-17T08:00:00+00:00", "open": 27.7, "high": 28.2, "low": 27.6, "close": 28.0, "volume": 1800}
+  ]
+}

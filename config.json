@@ -1,0 +1,14 @@
+{
+  "instrument": "AVAX-USDT",
+  "quote_currency": "USDT",
+  "execution_mode": "simulated",
+  "live_trading_enabled": false,
+  "risk_per_trade_pct": 0.05,
+  "max_notional_usd": 250.0,
+  "risk_reward_ratio": 2.0,
+  "stop_loss_pct": 0.012,
+  "min_news_sentiment": 0.0,
+  "macro_blackout_minutes": 30,
+  "max_spread_pct": 0.35,
+  "single_position_only": true
+}

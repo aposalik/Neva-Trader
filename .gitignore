@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / local CLI
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local data / logs
+decisions.log
+*.log
+data/*.local.*
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
